@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Life OS</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Life OS">
+<meta name="theme-color" content="#0e0d13">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+:root{
+  --bg:#0e0d13; --card:#16141e; --card2:#1c1926; --line:#262234;
+  --tx:#f3f2f7; --tx2:#8b86a0; --tx3:#5c5870;
+  --ac:#a78bfa; --acd:#251d3d; --acdd:#1a1530; --actx:#1e1247;
+  --good:#4ade9d; --goodbg:#0e2f27; --bad:#f27a7a; --badbg:#331518; --gold:#f5b04a; --goldbg:#33250e;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;overscroll-behavior-y:none}
+#app{max-width:520px;margin:0 auto;padding:calc(14px + var(--sat)) 16px calc(96px + var(--sab))}
+h1{font-size:26px;font-weight:700;letter-spacing:-.5px}
+h2{font-size:19px;font-weight:600;letter-spacing:-.3px}
+h3{font-size:15px;font-weight:600}
+.sub{color:var(--tx2);font-size:13px}
+.tiny{color:var(--tx3);font-size:11px}
+.card{background:var(--card);border-radius:16px;padding:15px;margin-bottom:12px}
+.card2{background:var(--card2);border-radius:12px;padding:12px}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.acc{color:var(--ac)}.goodc{color:var(--good)}.badc{color:var(--bad)}.goldc{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--ac);color:var(--actx);border:none;border-radius:22px;padding:11px 18px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform .1s}
+.btn:active{transform:scale(.95)}
+.btn.ghost{background:var(--card2);color:var(--tx)}
+.btn.soft{background:var(--acd);color:var(--ac)}
+.btn.danger{background:var(--badbg);color:var(--bad)}
+.btn.small{padding:7px 13px;font-size:12.5px;border-radius:16px}
+.btn.full{width:100%}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--acd);color:var(--ac);border-radius:14px;padding:4px 11px;font-size:12px;font-weight:600}
+.chip.dim{background:var(--card2);color:var(--tx2)}
+.chip.good{background:var(--goodbg);color:var(--good)}
+.chip.bad{background:var(--badbg);color:var(--bad)}
+.chip.gold{background:var(--goldbg);color:var(--gold)}
+input,select,textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 13px;color:var(--tx);font-size:15px;font-family:inherit;outline:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+label{display:block;font-size:12px;font-weight:600;color:var(--tx2);margin:12px 0 6px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b86a0' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.back{display:flex;align-items:center;gap:4px;color:var(--ac);font-size:15px;font-weight:600;background:none;border:none;font-family:inherit;padding:6px 0;cursor:pointer}
+/* tab bar */
+#tabs{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(22,20,30,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 10px calc(8px + var(--sab))}
+#tabs .inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-around}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--tx3);font-size:10px;font-weight:600;background:none;border:none;font-family:inherit;padding:4px 10px;cursor:pointer;transition:color .15s}
+.tab.on{color:var(--ac)}
+.tab svg{width:23px;height:23px}
+#plus{width:52px;height:52px;border-radius:50%;background:var(--ac);color:var(--actx);border:none;display:flex;align-items:center;justify-content:center;margin-top:-26px;box-shadow:0 4px 18px rgba(167,139,250,.45);cursor:pointer;transition:transform .15s}
+#plus:active{transform:scale(.9) rotate(90deg)}
+#plus svg{width:26px;height:26px}
+/* dashboard module tiles */
+.tile{background:var(--card);border-radius:16px;padding:14px;cursor:pointer;transition:transform .12s;position:relative;overflow:hidden}
+.tile:active{transform:scale(.96)}
+.tile .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:9px}
+.tile .ic svg{width:19px;height:19px}
+/* sheet */
+#ovl{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:90;opacity:0;pointer-events:none;transition:opacity .2s}
+#ovl.show{opacity:1;pointer-events:auto}
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:95;background:var(--card);border-radius:22px 22px 0 0;max-width:520px;margin:0 auto;max-height:88vh;overflow-y:auto;padding:10px 18px calc(24px + var(--sab));transform:translateY(105%);transition:transform .28s cubic-bezier(.32,.72,.22,1)}
+#sheet.show{transform:translateY(0)}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:4px auto 14px}
+/* habit check */
+.hcheck{width:44px;height:44px;min-width:44px;border-radius:14px;border:2px solid var(--line);background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.hcheck.done{background:var(--ac);border-color:var(--ac);color:var(--actx)}
+.hcheck svg{width:22px;height:22px}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.35)}100%{transform:scale(1)}}
+.pop{animation:pop .35s cubic-bezier(.32,.72,.22,1)}
+/* heatmap */
+.hm{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);gap:3px;overflow-x:auto;padding-bottom:4px}
+.hm div{width:11px;height:11px;border-radius:3px;background:var(--card2)}
+.hm .l1{background:#3b2f63}.hm .l2{background:#6650a8}.hm .l3{background:#8f75e0}.hm .l4{background:#a78bfa}
+/* streak flame */
+.streakbox{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal .dh{text-align:center;font-size:10px;color:var(--tx3);font-weight:700;padding:4px 0}
+.cald{aspect-ratio:1;border-radius:11px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12.5px;font-weight:600;cursor:pointer;border:1.5px solid transparent}
+.cald.off{opacity:.28}
+.cald.today{border-color:var(--ac)}
+.cald .dots{display:flex;gap:2px}
+.cald .dots i{width:4px;height:4px;border-radius:50%}
+/* rating slider row */
+.rate{display:flex;gap:5px}
+.rate button{flex:1;aspect-ratio:1;max-width:34px;border-radius:9px;border:none;background:var(--card2);color:var(--tx2);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.rate button.on{background:var(--ac);color:var(--actx)}
+/* progress ring / bar */
+.pbar{height:6px;border-radius:3px;background:var(--card2);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:3px;background:var(--ac);transition:width .5s cubic-bezier(.32,.72,.22,1)}
+/* set logging table */
+.setrow{display:grid;grid-template-columns:30px 1fr 1fr 44px;gap:8px;align-items:center;margin-bottom:8px}
+.setrow input{text-align:center;padding:10px 6px}
+.ghost{font-size:11px;color:var(--tx3);text-align:center}
+/* list item */
+.li{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:none}
+/* toast */
+#toast{position:fixed;top:calc(14px + var(--sat));left:50%;transform:translate(-50%,-70px);z-index:120;background:var(--card2);border:1px solid var(--line);color:var(--tx);padding:11px 20px;border-radius:20px;font-size:13.5px;font-weight:600;transition:transform .3s cubic-bezier(.32,.72,.22,1);white-space:nowrap}
+#toast.show{transform:translate(-50%,0)}
+/* confetti */
+.cf{position:fixed;top:-12px;z-index:110;width:9px;height:9px;border-radius:2px;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+/* segmented */
+.seg{display:flex;background:var(--card2);border-radius:12px;padding:3px;gap:3px;margin-bottom:14px}
+.seg button{flex:1;border:none;background:none;color:var(--tx2);font-family:inherit;font-size:12.5px;font-weight:600;padding:8px 4px;border-radius:9px;cursor:pointer}
+.seg button.on{background:var(--ac);color:var(--actx)}
+.empty{text-align:center;padding:34px 16px;color:var(--tx3);font-size:13.5px;line-height:1.6}
+.num{font-variant-numeric:tabular-nums}
+svg.chart{width:100%;display:block}
+::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="tabs"><div class="inner">
+<button class="tab on" data-v="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Home</button>
+<button class="tab" data-v="cal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18"/></svg>Calendar</button>
+<button id="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+<button class="tab" data-v="ana"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</button>
+<button class="tab" data-v="prof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>Profile</button>
+</div></nav>
+<div id="ovl"></div>
+<div id="sheet"></div>
+<div id="toast"></div>
+<script>
+/* ============ STORAGE ============ */
+const KEY='lifeos_v2';
+const todayISO=()=>new Date().toISOString().slice(0,10);
+function loadDB(){try{const r=localStorage.getItem(KEY);if(r){const d=JSON.parse(r);if(!d.events)d.events=[];(d.goals.todos||[]).forEach(t=>{if(!('due' in t))t.due='';});if(!d.game)d.game={xp:{disc:0,phys:0,health:0,mind:0,wealth:0},lastActive:todayISO(),quits:[],quests:{date:'',done:[]}};return d;}}catch(e){}return seed();}
+function saveDB(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+function uid(){return Math.random().toString(36).slice(2,9);}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
+
+/* ============ SEED — BLANK SLATE ============ */
+function seed(){
+  return {
+    profile:{name:'Braxton',phase:'Lean Bulk',targets:{cal:3000,protein:190,carbs:340,fat:80}},
+    habits:[],
+    ratings:{},
+    journal:{},
+    peptides:[],
+    workouts:{routines:[],sessions:[],bw:[]},
+    nutrition:{log:{},recent:[],meals:[]},
+    goals:{long:[],todos:[]},
+    events:[],
+    trades:[],
+    finance:{enabled:['accounts','holdings','income','savings','debt'],accounts:[],holdings:[],income:[],savings:[],debt:[]},
+    photos:[],
+    game:{xp:{disc:0,phys:0,health:0,mind:0,wealth:0},lastActive:todayISO(),quits:[],quests:{date:'',done:[]}},
+  };
+}
+
+let DB=loadDB();
+
+/* ============ UI HELPERS ============ */
+const $=s=>document.querySelector(s);
+const app=$('#app');
+let view='dash', navStack=[];
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600);}
+function celebrate(){for(let i=0;i<26;i++){const c=document.createElement('div');c.className='cf';c.style.left=Math.random()*100+'%';c.style.background=['#a78bfa','#4ade9d','#f5b04a','#f27a7a'][i%4];c.style.animationDuration=(1+Math.random())+'s';c.style.animationDelay=(Math.random()*.3)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2200);}}
+function openSheet(html){$('#sheet').innerHTML='<div class="grab"></div>'+html;$('#ovl').classList.add('show');$('#sheet').classList.add('show');}
+function closeSheet(){$('#ovl').classList.remove('show');$('#sheet').classList.remove('show');}
+$('#ovl').onclick=closeSheet;
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ico(n){const P={
+  ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+  droplet:'<path d="M12 3c3 4 6 7 6 10a6 6 0 01-12 0c0-3 3-6 6-10z"/>',
+  music:'<circle cx="7" cy="18" r="2.5"/><circle cx="18" cy="16" r="2.5"/><path d="M9.5 18V6l11-2v10"/>',
+  book:'<path d="M4 5a2 2 0 012-2h12v16H6a2 2 0 00-2 2V5z"/><path d="M18 3v16"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>',
+  pen:'<path d="M15 4l5 5L8 21H3v-5z"/>',
+  lotus:'<path d="M12 4c2 3 2 6 0 8-2-2-2-5 0-8zM4 12c3-1 6 0 8 2-3 1-6 0-8-2zM20 12c-3-1-6 0-8 2 3 1 6 0 8-2z"/>',
+  flame:'<path d="M12 3c1 4-2 5-2 8a2 2 0 004 0c2 2 3 4 3 6a5 5 0 01-10 0c0-4 3-6 5-14z"/>',
+  vial:'<path d="M9 3h6M10 3v7l-4 8a2.5 2.5 0 002.3 3.5h7.4A2.5 2.5 0 0018 18l-4-8V3"/>',
+  dumbbell:'<path d="M6.5 6.5v11M17.5 6.5v11M4 9v6M20 9v6M6.5 12h11"/>',
+  fork:'<path d="M6 3v7a2 2 0 002 2h0V3M8 12v9M17 3c-1.5 0-3 1.5-3 4s1.5 4 3 4v10"/>',
+  target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".5" fill="currentColor"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  wallet:'<rect x="3" y="6" width="18" height="14" rx="2.5"/><path d="M3 10h18M16 14h2"/>',
+  camera:'<rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-2h3L15 7"/>',
+  chevron:'<path d="M9 6l6 6-6 6"/>',
+  check:'<path d="M5 12l5 5L20 6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+}[n]||'';return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+P+'</svg>';}
+function svgLine(pts,w,h,color,fill){if(!pts.length)return '';const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);const mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);const pad=8;const X=v=>pad+(mxx===mnx?0:(v-mnx)/(mxx-mnx))*(w-2*pad);const Y=v=>h-pad-(mxy===mny?.5:(v-mny)/(mxy-mny))*(h-2*pad);let d=pts.map((p,i)=>(i?'L':'M')+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');let area=fill?d+`L${X(mxx).toFixed(1)} ${h-pad}L${X(mnx).toFixed(1)} ${h-pad}Z`:'';return (fill?`<path d="${area}" fill="${color}" opacity=".13"/>`:'')+`<path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`+pts.map(p=>`<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="2.4" fill="${color}"/>`).join('');}
+
+/* modules registry */
+window.MOD={};
+/* ============ GAME ENGINE ============ */
+const STATS={disc:['Discipline','#a78bfa'],phys:['Physique','#4ade9d'],health:['Health','#f5b04a'],mind:['Mind','#4ab3f5'],wealth:['Wealth','#f27a7a']};
+const RANKS=[[0,'Bronze','#b08d57'],[50,'Silver','#b8c0cc'],[60,'Gold','#f5b04a'],[70,'Platinum','#7fd8d8'],[80,'Diamond','#7fb3f5'],[90,'Master','#a78bfa'],[99,'Legend','#f3f2f7']];
+function statLvl(xp){return 1+Math.floor(Math.sqrt(Math.max(0,xp)/50));}
+function lvlFloor(l){return 50*(l-1)*(l-1);}
+function ovr(){return Math.min(99,35+Object.values(DB.game.xp).reduce((s,x)=>s+statLvl(x),0));}
+function rankOf(o){let r=RANKS[0];for(const x of RANKS)if(o>=x[0])r=x;return r;}
+function addXP(stat,amt,label){const g=DB.game;const beforeL=statLvl(g.xp[stat]);const beforeO=ovr();
+  g.xp[stat]=Math.max(0,g.xp[stat]+amt);g.lastActive=todayISO();saveDB();
+  if(amt>0)toast(`+${amt} XP \u00b7 ${STATS[stat][0]}`);
+  const afterL=statLvl(g.xp[stat]);const afterO=ovr();
+  if(afterL>beforeL){setTimeout(()=>{celebrate();toast(`${STATS[stat][0]} leveled up \u2192 Lv ${afterL}`);},900);}
+  if(rankOf(afterO)[1]!==rankOf(beforeO)[1]&&afterO>beforeO){setTimeout(()=>{celebrate();toast(`RANK UP \u2192 ${rankOf(afterO)[1]}`);},1600);}}
+function applyDecay(){const g=DB.game;const idle=daysSince(g.lastActive);
+  if(idle>1){const loss=Math.min(10,(idle-1))*5;Object.keys(g.xp).forEach(k=>g.xp[k]=Math.max(0,g.xp[k]-loss));g.lastActive=todayISO();saveDB();}}
+const QUOTES=["Discipline is choosing between what you want now and what you want most.","We are what we repeatedly do. Excellence, then, is not an act, but a habit. \u2014 Aristotle","The successful warrior is the average man, with laser-like focus. \u2014 Bruce Lee","You do not rise to the level of your goals. You fall to the level of your systems. \u2014 James Clear","Hard choices, easy life. Easy choices, hard life. \u2014 Jerzy Gregorek","No man has the right to be an amateur in the matter of physical training. \u2014 Socrates","The mind is everything. What you think you become.","Suffer the pain of discipline or suffer the pain of regret.","A river cuts through rock not because of its power, but because of its persistence.","Waste no more time arguing about what a good man should be. Be one. \u2014 Marcus Aurelius","You have power over your mind, not outside events. Realize this, and you will find strength. \u2014 Marcus Aurelius","The impediment to action advances action. What stands in the way becomes the way. \u2014 Marcus Aurelius","First say to yourself what you would be; then do what you have to do. \u2014 Epictetus","No man is free who is not master of himself. \u2014 Epictetus","Luck is what happens when preparation meets opportunity. \u2014 Seneca","We suffer more often in imagination than in reality. \u2014 Seneca","It is a shameful thing for the soul to faint while the body still perseveres. \u2014 Marcus Aurelius","Do something today that your future self will thank you for.","Motivation gets you going. Discipline keeps you growing.","Small daily improvements are the key to staggering long-term results.","Don't count the days. Make the days count. \u2014 Muhammad Ali","I hated every minute of training, but I said, don't quit. Suffer now and live the rest of your life as a champion. \u2014 Muhammad Ali","Champions aren't made in gyms. They are made from something deep inside them.","The best time to plant a tree was 20 years ago. The second best time is now.","Success is the sum of small efforts, repeated day in and day out.","It's not about having time. It's about making time.","You can't cheat the grind. It knows how much you've invested.","Consistency is what transforms average into excellence.","When you feel like quitting, remember why you started.","The pain you feel today will be the strength you feel tomorrow.","Nothing will work unless you do. \u2014 Maya Angelou","Either you run the day or the day runs you. \u2014 Jim Rohn","Discipline is the bridge between goals and accomplishment. \u2014 Jim Rohn","Amateurs sit and wait for inspiration. The rest of us just get up and go to work. \u2014 Stephen King","Whether you think you can or you think you can't, you're right. \u2014 Henry Ford","What we fear doing most is usually what we most need to do. \u2014 Tim Ferriss","Focus on being productive instead of busy. \u2014 Tim Ferriss","Your future is created by what you do today, not tomorrow.","Level up in silence. Let results make the noise.","One day or day one. You decide.","The market rewards patience and punishes emotion.","Plan the trade. Trade the plan.","Risk comes from not knowing what you're doing. \u2014 Warren Buffett","The stock market is a device for transferring money from the impatient to the patient. \u2014 Warren Buffett","Practice isn't the thing you do once you're good. It's the thing you do that makes you good. \u2014 Malcolm Gladwell","Slow is smooth. Smooth is fast.","Comparison is the thief of joy. \u2014 Theodore Roosevelt","Do the hard thing first.","A year from now you may wish you had started today. \u2014 Karen Lamb","He who conquers himself is the mightiest warrior. \u2014 Confucius","It does not matter how slowly you go as long as you do not stop. \u2014 Confucius","Energy and persistence conquer all things. \u2014 Benjamin Franklin"];
+function dailyQuote(){const n=Math.floor(Date.now()/864e5)%QUOTES.length;return QUOTES[n];}
+function questList(){const d=todayISO();const q=[];
+  if(DB.habits.length)q.push({id:'q1',name:'Complete every habit',xp:20,stat:'disc',done:DB.habits.every(h=>hDone(h,d))});
+  q.push({id:'q2',name:'Log a workout or bodyweight',xp:15,stat:'phys',done:DB.workouts.sessions.some(s=>s.date===d)||DB.workouts.bw.some(b=>b.date===d)});
+  q.push({id:'q3',name:'Write a journal entry',xp:10,stat:'mind',done:!!(DB.journal[d]&&DB.journal[d].trim())});
+  return q;}
+function checkQuests(){const g=DB.game;const d=todayISO();
+  if(g.quests.date!==d){g.quests={date:d,done:[]};}
+  questList().forEach(q=>{if(q.done&&!g.quests.done.includes(q.id)){g.quests.done.push(q.id);addXP(q.stat,q.xp,'Quest');}});}
+const TREE={disc:['Show up','7-day streak mindset','Habit architect','No zero days','Iron routine','Unbreakable','Monk mode'],
+  phys:['First session','Progressive overload','Body in motion','Strength base','Engine built','Sculpted','Peak physique'],
+  health:['Protocol started','Consistent dosing','Recovery dialed','Biomarker aware','Optimized stack','Longevity mind','Biohacker'],
+  mind:['First reflection','Self-aware','Clear head','Pattern spotter','Deep focus','Stoic calm','Mastermind'],
+  wealth:['First dollar tracked','Journaled trader','Rule follower','Net worth up','Edge found','Compounding','Money master']};
+const TREE_LVLS=[1,2,4,7,10,14,19];
+function achievements(){const a=[];const g=DB.game;
+  const push=(name,desc,done)=>a.push({name,desc,done});
+  push('Getting started','Create your first habit',DB.habits.length>0);
+  push('Locked in','Hit a 7-day streak on any habit',DB.habits.some(h=>bestStreak(h)>=7));
+  push('Relentless','Hit a 30-day streak on any habit',DB.habits.some(h=>bestStreak(h)>=30));
+  push('First blood','Finish your first workout',DB.workouts.sessions.length>=1);
+  push('Gym rat','Log 25 workouts',DB.workouts.sessions.length>=25);
+  push('On protocol','Log your first dose',DB.peptides.some(p=>Object.values(p.log).some(v=>v)));
+  push('Journaled trader','Grade 10 trades',DB.trades.length>=10);
+  push('Iron rules','10 trades with rules followed',DB.trades.filter(t=>t.followedRules).length>=10);
+  push('Milestone','Complete a sub-goal',DB.goals.long.some(gl=>gl.sub.some(s=>s.done)));
+  push('Finisher','Complete an entire long-term goal',DB.goals.long.some(gl=>gl.sub.length&&gl.sub.every(s=>s.done)));
+  push('Clean fortnight','14 days clean on a quit timer',g.quits.some(q=>quitDays(q)>=14||q.best>=14));
+  push('Level 5','Reach level 5 in any stat',Object.values(g.xp).some(x=>statLvl(x)>=5));
+  push('Silver card','Reach 50 OVR',ovr()>=50);
+  push('Gold card','Reach 60 OVR',ovr()>=60);
+  push('Diamond card','Reach 80 OVR',ovr()>=80);
+  return a;}
+function quitDays(q){const last=q.relapses.length?q.relapses[q.relapses.length-1]:q.start;return daysSince(last);}
+/* ============ RANK SCREEN ============ */
+MOD.rank=function(){
+  const g=DB.game;const o=ovr();const r=rankOf(o);
+  const tab=MOD._rtab||'stats';
+  let body='';
+  if(tab==='stats'){
+    body=Object.entries(STATS).map(([k,[name,col]])=>{const xp=g.xp[k];const lv=statLvl(xp);const cur=xp-lvlFloor(lv);const need=lvlFloor(lv+1)-lvlFloor(lv);
+      return `<div class="card"><div class="between mb8"><div class="row"><span style="width:10px;height:10px;border-radius:3px;background:${col}"></span><h3>${name}</h3></div><span class="chip dim">Lv ${lv}</span></div>
+      <div class="pbar"><i style="width:${Math.min(100,cur/need*100)}%;background:${col}"></i></div>
+      <div class="between mt8"><span class="tiny num">${cur} / ${need} XP</span><span class="tiny num">${xp} total</span></div></div>`;}).join('')+
+      `<div class="card"><h3 class="mb8">How XP works</h3><div class="sub" style="line-height:1.7">Habits \u2192 Discipline \u00b7 Workouts & weight \u2192 Physique \u00b7 Doses \u2192 Health \u00b7 Journal & ratings \u2192 Mind \u00b7 Trades & finance \u2192 Wealth. Goals boost Discipline. Go idle and your XP slowly decays \u2014 the rank has to be defended.</div></div>`;
+  } else if(tab==='tree'){
+    body=Object.entries(STATS).map(([k,[name,col]])=>{const lv=statLvl(g.xp[k]);
+      return `<div class="card"><h3 class="mb12">${name}</h3><div style="display:flex;flex-direction:column;gap:0">
+      ${TREE[k].map((node,i)=>{const req=TREE_LVLS[i];const un=lv>=req;
+        return `<div class="row" style="gap:12px;${i<TREE[k].length-1?'padding-bottom:2px':''}">
+        <div style="display:flex;flex-direction:column;align-items:center"><div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid ${un?col:'var(--line)'};background:${un?col:'var(--card2)'};color:${un?'#0e0d13':'var(--tx3)'};font-size:11px;font-weight:800">${un?'\u2713':req}</div>
+        ${i<TREE[k].length-1?`<div style="width:2px;height:16px;background:${statLvl(g.xp[k])>=TREE_LVLS[i+1]?col:'var(--line)'}"></div>`:''}</div>
+        <div style="padding-top:4px"><div style="font-size:13.5px;font-weight:600;${un?'':'color:var(--tx3)'}">${node}</div><div class="tiny">${un?'Unlocked':'Reach Lv '+req}</div></div></div>`;}).join('')}
+      </div></div>`;}).join('');
+  } else {
+    const ach=achievements();const got=ach.filter(x=>x.done).length;
+    body=`<div class="sub mb12">${got} of ${ach.length} unlocked</div>`+
+      ach.map(x=>`<div class="card row" style="${x.done?'':'opacity:.45'}"><div style="width:38px;height:38px;min-width:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:${x.done?'var(--goldbg)':'var(--card2)'};color:${x.done?'var(--gold)':'var(--tx3)'}">${ico(x.done?'check':'target')}</div>
+      <div><h3>${x.name}</h3><div class="sub">${x.desc}</div></div></div>`).join('');
+  }
+  return head('Rank')+
+    `<div class="card" style="background:linear-gradient(135deg,${r[2]}22,#16141e);border:1px solid ${r[2]}44">
+      <div class="between"><div><div class="tiny">OVERALL RATING</div><div style="font-size:44px;font-weight:800;line-height:1.05" class="num">${o}</div>
+      <span class="chip" style="background:${r[2]}26;color:${r[2]}">${r[1]}</span></div>
+      <div style="text-align:right">${Object.entries(STATS).map(([k,[n,c]])=>`<div class="tiny num" style="margin-bottom:3px"><span style="color:${c}">${n.slice(0,4).toUpperCase()}</span> <b style="color:var(--tx)">${statLvl(g.xp[k])}</b></div>`).join('')}</div></div>
+      ${o<99?`<div class="tiny mt12">Next rank at ${(RANKS.find(x=>x[0]>o)||[99])[0]} OVR</div>`:''}</div>`+
+    seg('_rtab',[['stats','Stats'],['tree','Skill tree'],['awards','Awards']])+body;
+}
+/* ============ QUIT TIMERS ============ */
+function addQuit(){openSheet(`<h2 class="mb12">Quit something</h2><label>What are you quitting?</label><input id="qn" placeholder="e.g. Nicotine">
+  <button class="btn full mt16" onclick="createQuit()">Start the clock</button>`);}
+function createQuit(){const n=$('#qn').value.trim();if(!n)return toast('Name required');
+  DB.game.quits.push({id:uid(),name:n,start:todayISO(),best:0,relapses:[]});saveDB();closeSheet();render();toast('Clock started');}
+function relapse(id){const q=DB.game.quits.find(x=>x.id===id);if(!confirm('Log a relapse? The clock resets but your history stays.'))return;
+  q.best=Math.max(q.best,quitDays(q));q.relapses.push(todayISO());addXP('disc',-15);saveDB();render();toast('Clock reset. Back on it.');}
+function delQuit(id){if(confirm('Remove this quit timer?')){DB.game.quits=DB.game.quits.filter(x=>x.id!==id);saveDB();render();}}
+</script>
+<script>
+/* ============ ROUTER ============ */
+function go(v){view=v;navStack=[];render();window.scrollTo(0,0);}
+function push(m){navStack.push(m);render();window.scrollTo(0,0);}
+function pop(){navStack.pop();render();window.scrollTo(0,0);}
+function render(){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===view&&!navStack.length));
+  if(navStack.length){app.innerHTML=MOD[navStack[navStack.length-1]]();}
+  else app.innerHTML=({dash:Dash,cal:Calendar,ana:Analytics,prof:Profile}[view]||Dash)();
+  bind();
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(t.dataset.v));
+$('#plus').onclick=quickLog;
+
+/* ============ DASHBOARD ============ */
+function Dash(){
+  applyDecay();checkQuests();
+  const d=todayISO();
+  const habitsDone=DB.habits.filter(h=>hDone(h,d)).length;
+  const pepDue=DB.peptides.length, pepDone=DB.peptides.filter(p=>p.log[d]).length;
+  const foods=DB.nutrition.log[d]||[];
+  const cal=foods.reduce((s,f)=>s+f.cal,0), pro=foods.reduce((s,f)=>s+f.p,0);
+  const tgt=DB.profile.targets;
+  const netWorth=calcNetWorth();
+  const nextSub=nextSubGoal();
+  const o=ovr();const r=rankOf(o);const quests=questList();const qd=DB.game.quests.done;
+  const tiles=[
+    ['habits','flame','Habits',habitsDone+' / '+DB.habits.length,'--ac'],
+    ['peptides','vial','Peptides',pepDone+' / '+pepDue+' logged','--good'],
+    ['workouts','dumbbell','Workouts',DB.workouts.sessions.length+' sessions','--ac'],
+    ['nutrition','fork','Nutrition',cal+' cal','--gold'],
+    ['goals','target','Goals & To-Dos',DB.goals.todos.filter(t=>!t.done).length+' active','--ac'],
+    ['trading','chart','Trading',tradeWinRate()+'% win','--good'],
+    ['finance','wallet','Finance','$'+netWorth.toLocaleString(),'--gold'],
+    ['photos','camera','Progress','+ '+DB.photos.length+' photos','--ac'],
+  ];
+  return `
+  <div class="card" data-mod="rank" style="cursor:pointer;background:linear-gradient(135deg,${r[2]}1f,#16141e);border:1px solid ${r[2]}3d">
+    <div class="between"><div><div class="tiny">${esc(DB.profile.name).toUpperCase()} \u00b7 ${esc(DB.profile.phase).toUpperCase()}</div>
+      <div class="row" style="gap:12px;margin-top:4px"><span style="font-size:40px;font-weight:800;line-height:1" class="num">${o}</span>
+      <span class="chip" style="background:${r[2]}26;color:${r[2]}">${r[1]}</span></div></div>
+      <div style="text-align:right">${Object.entries(STATS).map(([k,[n,c]])=>`<div class="tiny num" style="margin-bottom:2px"><span style="color:${c}">${n.slice(0,4).toUpperCase()}</span> <b style="color:var(--tx)">${statLvl(DB.game.xp[k])}</b></div>`).join('')}</div></div>
+    <div class="tiny mt8">Tap for stats, skill tree & awards \u203a</div>
+  </div>
+
+  <div class="card2 mb12" style="border-left:3px solid var(--ac)"><div style="font-size:13px;line-height:1.55;font-style:italic;color:var(--tx2)">${dailyQuote()}</div></div>
+
+  <div class="card">
+    <div class="between mb12"><h3>Daily quests</h3><span class="tiny num">${qd.length}/${quests.length}</span></div>
+    ${quests.map(q=>`<div class="between" style="padding:7px 0"><div class="row"><div class="hcheck ${q.done?'done':''}" style="width:26px;height:26px;border-width:1.5px;pointer-events:none">${q.done?ico('check'):''}</div>
+      <span style="font-size:13.5px;${q.done?'opacity:.5':''}">${q.name}</span></div><span class="chip dim">+${q.xp}</span></div>`).join('')}
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,#1c1630,#16141e)">
+    <div class="between mb12"><h3>Today</h3><span class="tiny">${new Date().toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'})}</span></div>
+    <div class="grid2">
+      <div class="card2"><div class="tiny">Calories</div><div style="font-size:19px;font-weight:700" class="num">${cal}<span class="tiny" style="font-weight:400"> / ${tgt.cal}</span></div>
+        <div class="pbar mt8"><i style="width:${Math.min(100,cal/tgt.cal*100)}%"></i></div></div>
+      <div class="card2"><div class="tiny">Protein</div><div style="font-size:19px;font-weight:700" class="num">${pro}<span class="tiny" style="font-weight:400"> / ${tgt.protein}g</span></div>
+        <div class="pbar mt8"><i style="width:${Math.min(100,pro/tgt.protein*100)}%;background:var(--good)"></i></div></div>
+    </div>
+    ${nextSub?`<div class="card2 mt12 row"><div class="chip">Next</div><div style="flex:1"><div style="font-size:13.5px;font-weight:600">${esc(nextSub.name)}</div><div class="tiny">${esc(nextSub.goal)}</div></div></div>`:''}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    ${tiles.map(t=>`<div class="tile" data-mod="${t[0]}">
+      <div class="ic" style="background:var(--acd);color:var(${t[4]})">${ico(t[1])}</div>
+      <h3>${t[2]}</h3><div class="sub mt4">${t[3]}</div></div>`).join('')}
+  </div>`;
+}
+
+/* ============ HABITS ============ */
+MOD.habits=function(){
+  const tab=MOD._htab||'today';
+  let body='';
+  if(tab==='today'){
+    const d=todayISO();
+    body=DB.habits.length?DB.habits.map(h=>{
+      const done=hDone(h,d);const val=h.log[d];
+      let right=`<div class="hcheck ${done?'done':''}" data-h="${h.id}">${done?ico('check'):''}</div>`;
+      let detail=h.type==='check'?'Daily':(h.type==='qty'?`${val||0} / ${h.target} ${h.unit}`:`${val||0} / ${h.target} ${h.unit}`);
+      return `<div class="card between"><div class="row" style="flex:1;cursor:pointer" onclick="editHabit('${h.id}')"><div class="ic" style="width:38px;height:38px;border-radius:11px;background:var(--acd);color:var(--ac);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ico(h.icon).replace(/<svg[^>]*>|<\/svg>/g,'')}</svg></div>
+        <div><h3>${esc(h.name)}</h3><div class="sub">${detail}</div></div></div>${right}</div>`;
+    }).join(''):`<div class="empty">No habits yet.<br>Tap + Habit to create your first one.</div>`;
+    const r=DB.ratings[d]||{};
+    body+=`<div class="card"><h3 class="mb12">How was today?</h3>
+      ${['mood','energy','focus'].map(k=>`<div class="mb12"><div class="between mb8"><span class="sub" style="text-transform:capitalize">${k}</span><span class="acc num" style="font-weight:700">${r[k]||'\u2013'}</span></div>
+        <div class="rate" data-rate="${k}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="${r[k]===n?'on':''}" data-n="${n}">${n}</button>`).join('')}</div></div>`).join('')}</div>`;
+    const jr=DB.journal[d]||'';
+    body+=`<div class="card"><h3 class="mb8">Journal</h3><textarea id="jrnl" rows="3" placeholder="A line about today\u2026">${esc(jr)}</textarea>
+      <button class="btn soft small full mt12" onclick="saveJournal()">Save entry</button></div>`;
+  } else if(tab==='quit'){
+    const qs=DB.game.quits;
+    body=(qs.length?qs.map(q=>{const days=quitDays(q);
+      return `<div class="card"><div class="between mb8"><h3>${esc(q.name)}</h3><button class="btn small ghost" onclick="delQuit('${q.id}')">\u00d7</button></div>
+      <div class="row" style="gap:16px;align-items:baseline"><span style="font-size:34px;font-weight:800" class="num goodc">${days}</span><span class="sub">days clean</span></div>
+      <div class="row mt8" style="gap:8px"><span class="chip dim">Best: ${Math.max(q.best,days)}d</span><span class="chip dim">Relapses: ${q.relapses.length}</span></div>
+      <button class="btn small danger mt12" onclick="relapse('${q.id}')">I slipped</button></div>`;}).join(''):`<div class="empty">Quitting something?<br>Start a clock and watch the days stack.</div>`)+
+      `<button class="btn full soft mt8" onclick="addQuit()">+ Quit something</button>`;
+  } else if(tab==='streaks'){
+    body=DB.habits.length?DB.habits.map(h=>{const s=streak(h);return `<div class="card between"><div><h3>${esc(h.name)}</h3><div class="sub">Best: ${bestStreak(h)} days</div></div>
+      <div class="row"><span class="goldc">${ico('flame').replace('width="2"','width="2" width=18')}</span><span style="font-size:22px;font-weight:700" class="num goldc">${s}</span></div></div>`;}).join(''):`<div class="empty">Add habits to start building streaks.</div>`;
+  } else if(tab==='heat'){
+    body=DB.habits.length?DB.habits.map(h=>`<div class="card"><div class="between mb12"><h3>${esc(h.name)}</h3><span class="tiny">${Math.round(completion(h)*100)}%</span></div>${heatmap(h)}</div>`).join(''):`<div class="empty">Your heatmap wall builds here once you have habits.</div>`;
+  } else {
+    body=DB.habits.length?(`<div class="card"><h3 class="mb12">Completion rate \u2014 last 30 days</h3>${completionChart()}</div>`+
+      DB.habits.map(h=>`<div class="card between"><h3>${esc(h.name)}</h3><div class="row" style="flex:1;max-width:150px"><div class="pbar" style="flex:1"><i style="width:${completion(h)*100}%"></i></div><span class="tiny num">${Math.round(completion(h)*100)}%</span></div></div>`).join('')):`<div class="empty">Trends appear after you add habits.</div>`;
+  }
+  return head('Habits',`<button class="btn small soft" onclick="addHabit()">+ Habit</button>`)+
+    seg('_htab',[['today','Today'],['quit','Quit'],['streaks','Streaks'],['heat','Heat'],['rate','Trends']])+body;
+}
+function hDone(h,d){const v=h.log[d];if(h.type==='check')return v===true;return v>=h.target;}
+function toggleHabit(id){const h=DB.habits.find(x=>x.id===id);const d=todayISO();
+  if(h.type==='check'){h.log[d]=!h.log[d];addXP('disc',h.log[d]?10:-10);}
+  else{openSheet(`<h2 class="mb12">${esc(h.name)}</h2><label>Amount (${h.unit})</label>
+    <input type="number" id="qv" value="${h.log[d]||h.target}" inputmode="decimal">
+    <button class="btn full mt16" onclick="setQty('${id}')">Log ${h.unit}</button>`);return;}
+  saveDB();
+  const el=document.querySelector(`[data-h="${id}"]`);if(el){el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),350);}
+  if(DB.habits.every(x=>hDone(x,d))){celebrate();toast('All habits done \ud83d\udd25');}
+  render();
+}
+function setQty(id){const h=DB.habits.find(x=>x.id===id);const d=todayISO();const was=hDone(h,d);h.log[d]=parseFloat($('#qv').value)||0;const now=hDone(h,d);if(now&&!was)addXP('disc',10);else if(!now&&was)addXP('disc',-10);saveDB();closeSheet();render();}
+function saveJournal(){const d=todayISO();const had=!!(DB.journal[d]&&DB.journal[d].trim());DB.journal[d]=$('#jrnl').value;saveDB();if(!had&&DB.journal[d].trim())addXP('mind',8);else toast('Journal saved');}
+function setRate(k,n){const d=todayISO();const first=!DB.ratings[d];DB.ratings[d]=DB.ratings[d]||{};DB.ratings[d][k]=n;saveDB();if(first)addXP('mind',3);render();}
+function addHabit(){openSheet(`<h2 class="mb12">New habit</h2>
+  <label>Name</label><input id="hn" placeholder="e.g. Cold shower">
+  <label>Type</label><select id="ht"><option value="check">Simple check</option><option value="qty">Quantity (e.g. 4L water)</option><option value="dur">Duration (e.g. 30 min)</option></select>
+  <div id="htgt" style="display:none"><label>Target</label><div class="row"><input type="number" id="htv" value="1" style="flex:1"><input id="htu" placeholder="unit" style="flex:1"></div></div>
+  <button class="btn full mt16" onclick="createHabit()">Add habit</button>`);
+  $('#ht').onchange=e=>{$('#htgt').style.display=e.target.value==='check'?'none':'block';};
+}
+function createHabit(){const n=$('#hn').value.trim();if(!n)return toast('Name required');const t=$('#ht').value;
+  DB.habits.push({id:uid(),name:n,type:t,icon:'flame',target:t==='check'?1:parseFloat($('#htv').value)||1,unit:t==='check'?'':($('#htu').value||''),log:{}});
+  saveDB();closeSheet();render();toast('Habit added');}
+function streak(h){let s=0;for(let i=0;i<400;i++){if(hDone(h,daysAgo(i)))s++;else if(i>0)break;else if(!hDone(h,daysAgo(0)))continue;else break;}return s;}
+function bestStreak(h){let best=0,cur=0;for(let i=90;i>=0;i--){if(hDone(h,daysAgo(i))){cur++;best=Math.max(best,cur);}else cur=0;}return best;}
+function completion(h){let c=0;for(let i=0;i<30;i++)if(hDone(h,daysAgo(i)))c++;return c/30;}
+function heatmap(h){let cells='';for(let i=69;i>=0;i--){const d=daysAgo(i);let lv=0;if(h.type==='check'){lv=h.log[d]?4:0;}else{const r=(h.log[d]||0)/h.target;lv=r>=1?4:r>=.66?3:r>=.33?2:r>0?1:0;}cells+=`<div class="${lv?'l'+lv:''}"></div>`;}return `<div class="hm">${cells}</div>`;}
+function completionChart(){const pts=[];for(let i=29;i>=0;i--){const d=daysAgo(i);const done=DB.habits.filter(h=>hDone(h,d)).length;pts.push({x:29-i,y:done/DB.habits.length*100});}return `<svg class="chart" viewBox="0 0 320 120" preserveAspectRatio="none" style="height:120px">${svgLine(pts,320,120,'#a78bfa',true)}</svg>`;}
+
+/* shared header + segmented control */
+function head(title,right){return `<div class="topbar"><button class="back" onclick="pop()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>Back</button>${right||''}</div><h1 class="mb12">${title}</h1>`;}
+function seg(stateKey,opts){return `<div class="seg">${opts.map(o=>`<button class="${(MOD[stateKey]||opts[0][0])===o[0]?'on':''}" onclick="MOD['${stateKey}']='${o[0]}';render()">${o[1]}</button>`).join('')}</div>`;}
+
+/* ============ PEPTIDE LIBRARY ============ */
+const PEPLIB={
+  'IGF-1 LR3':{mech:'Long-acting IGF-1 analog; promotes muscle cell growth & hyperplasia.',half:'20\u201330 hrs',dose:'20\u201350mcg post-workout'},
+  'CJC-1295 + Ipamorelin':{mech:'GHRH + ghrelin mimetic combo; pulsatile GH release.',half:'CJC ~30min (no DAC), Ipa ~2hrs',dose:'100mcg / 100\u2013300mcg, 1\u20133x daily'},
+  'CJC-1295 (no DAC)':{mech:'GHRH analog; amplifies natural GH pulse.',half:'~30 min',dose:'100mcg per dose'},
+  'Ipamorelin':{mech:'Selective GH secretagogue, minimal cortisol/prolactin.',half:'~2 hrs',dose:'100\u2013300mcg'},
+  'Tesamorelin':{mech:'GHRH analog, strong on visceral fat reduction.',half:'~30 min',dose:'1\u20132mg daily'},
+  'BPC-157':{mech:'Body-protecting peptide; tendon/gut healing & angiogenesis.',half:'~4 hrs',dose:'250\u2013500mcg 1\u20132x daily'},
+  'TB-500':{mech:'Thymosin beta-4 fragment; systemic recovery & flexibility.',half:'~2\u20133 days',dose:'2\u20132.5mg 2x weekly'},
+  'MK-677 (Ibutamoren)':{mech:'Oral ghrelin agonist; sustained GH & IGF-1 elevation.',half:'~24 hrs',dose:'10\u201325mg daily'},
+  'Semaglutide':{mech:'GLP-1 agonist; appetite suppression, glucose control.',half:'~7 days',dose:'0.25\u20132.4mg weekly'},
+  'Retatrutide':{mech:'Triple GIP/GLP-1/glucagon agonist; strong fat loss.',half:'~6 days',dose:'1\u201312mg weekly (titrate)'},
+  'Tirzepatide':{mech:'Dual GIP/GLP-1 agonist.',half:'~5 days',dose:'2.5\u201315mg weekly'},
+  'GHK-Cu':{mech:'Copper peptide; skin, collagen, wound healing.',half:'~1 hr',dose:'1\u20132mg or topical'},
+  'PT-141':{mech:'Melanocortin agonist; libido.',half:'~2 hrs',dose:'1\u20132mg as needed'},
+  'Melanotan II':{mech:'Melanocortin agonist; tanning.',half:'~1 hr',dose:'250\u2013500mcg'},
+  'Thymosin Alpha-1':{mech:'Immune modulation.',half:'~2 hrs',dose:'1.5mg 2x weekly'},
+};
+/* ============ PEPTIDES ============ */
+MOD.peptides=function(){
+  const d=todayISO();
+  const cards=DB.peptides.map(p=>{
+    const done=p.log[d];const wk=cycleWeek(p);const totWk=Math.ceil(p.cycleLen/7);const pct=Math.min(100,(daysSince(p.cycleStart)/p.cycleLen)*100);
+    return `<div class="card">
+      <div class="between"><div><h3>${esc(p.name)}</h3><div class="sub mt4">${esc(p.dose)} \u00b7 ${esc(p.freq)}</div></div>
+        <div class="hcheck ${done?'done':''}" data-pep="${p.id}">${done?ico('check'):''}</div></div>
+      <div class="mt12"><div class="between mb8"><span class="tiny">Week ${wk} of ${totWk}</span><span class="tiny acc">${Math.round(pct)}%</span></div>
+        <div class="pbar"><i style="width:${pct}%"></i></div></div>
+      <div class="row mt12"><span class="chip dim">${esc(p.site)}</span><span style="margin-left:auto" class="row"><button class="btn small ghost" onclick="editPeptide('${p.id}')">Edit</button><button class="btn small ghost" onclick="pepInfo('${esc(p.name)}')">Info</button></span></div>
+    </div>`;
+  }).join('')||`<div class="empty">No active protocols.<br>Add your first compound to start tracking.</div>`;
+  return head('Peptides',`<button class="btn small soft" onclick="reconCalc()">Recon calc</button>`)+
+    cards+`<button class="btn full soft mt8" onclick="addPeptide()">+ Add protocol</button>`;
+}
+function daysSince(iso){return Math.floor((Date.now()-new Date(iso))/864e5);}
+function cycleWeek(p){return Math.max(1,Math.floor(daysSince(p.cycleStart)/7)+1);}
+function togglePep(id){const p=DB.peptides.find(x=>x.id===id);const d=todayISO();
+  if(!p.log[d]){openSheet(`<h2 class="mb12">Log ${esc(p.name)}</h2><div class="sub mb12">${esc(p.dose)} \u00b7 ${esc(p.site)}</div>
+    <label>Notes / response (optional)</label><textarea id="pn" rows="2" placeholder="Sides, pumps, hunger, sleep\u2026"></textarea>
+    <button class="btn full mt16" onclick="confirmPep('${id}')">Mark taken</button>`);}
+  else{p.log[d]=false;delete p.notes?.[d];saveDB();render();}
+}
+function confirmPep(id){const p=DB.peptides.find(x=>x.id===id);const d=todayISO();p.log[d]=true;p.notes=p.notes||{};const n=$('#pn').value.trim();if(n)p.notes[d]=n;saveDB();closeSheet();addXP('health',8);render();}
+function pepInfo(name){const info=PEPLIB[name]||{mech:'Custom compound.',half:'\u2014',dose:'\u2014'};
+  openSheet(`<h2 class="mb12">${esc(name)}</h2>
+    <div class="card2 mb8"><div class="tiny mb8">MECHANISM</div><div style="font-size:14px;line-height:1.5">${esc(info.mech)}</div></div>
+    <div class="grid2"><div class="card2"><div class="tiny">Half-life</div><div style="font-weight:600;margin-top:4px">${esc(info.half)}</div></div>
+    <div class="card2"><div class="tiny">Typical dose</div><div style="font-weight:600;margin-top:4px">${esc(info.dose)}</div></div></div>
+    <div class="tiny mt12" style="line-height:1.5">Reference info only \u2014 not medical advice. Verify dosing with your own research and a clinician.</div>`);}
+function addPeptide(){const opts=Object.keys(PEPLIB).map(n=>`<option>${n}</option>`).join('')+'<option>Custom\u2026</option>';
+  openSheet(`<h2 class="mb12">New protocol</h2>
+    <label>Compound</label><select id="pc">${opts}</select>
+    <label>Dose</label><input id="pd" placeholder="e.g. 20mcg">
+    <label>Frequency</label><input id="pf" placeholder="e.g. Post-workout / Nightly">
+    <label>Injection site</label><input id="ps" placeholder="e.g. Delt (rotate)">
+    <label>Cycle length (days)</label><input id="pl" type="number" value="28" inputmode="numeric">
+    <button class="btn full mt16" onclick="createPeptide()">Start protocol</button>`);}
+function createPeptide(){let name=$('#pc').value;if(name==='Custom\u2026'){name=prompt('Compound name')||'Custom';}
+  DB.peptides.push({id:uid(),name,dose:$('#pd').value||'\u2014',freq:$('#pf').value||'Daily',site:$('#ps').value||'\u2014',cycleLen:parseInt($('#pl').value)||28,cycleStart:todayISO(),log:{},notes:{}});
+  saveDB();closeSheet();render();toast('Protocol added');}
+function reconCalc(){openSheet(`<h2 class="mb12">Reconstitution calculator</h2>
+  <label>Peptide in vial (mg)</label><input id="rmg" type="number" value="10" inputmode="decimal">
+  <label>Bacteriostatic water added (mL)</label><input id="rml" type="number" value="2" inputmode="decimal">
+  <label>Desired dose (mcg)</label><input id="rmc" type="number" value="250" inputmode="numeric">
+  <button class="btn full mt16" onclick="doRecon()">Calculate</button>
+  <div id="rres" class="mt16"></div>`);
+  ['rmg','rml','rmc'].forEach(i=>$('#'+i).oninput=doRecon);doRecon();}
+function doRecon(){const mg=parseFloat($('#rmg').value),ml=parseFloat($('#rml').value),mc=parseFloat($('#rmc').value);
+  if(!mg||!ml||!mc){$('#rres').innerHTML='';return;}
+  const concMcgPerMl=(mg*1000)/ml;const drawMl=mc/concMcgPerMl;const units=drawMl*100;
+  $('#rres').innerHTML=`<div class="card2"><div class="between mb8"><span class="sub">Concentration</span><span style="font-weight:700" class="num">${Math.round(concMcgPerMl)} mcg/mL</span></div>
+    <div class="between"><span class="sub">Draw</span><span style="font-weight:700" class="acc num">${units.toFixed(0)} units</span></div>
+    <div class="tiny mt8">On a standard U-100 insulin syringe (${drawMl.toFixed(3)} mL)</div></div>`;}
+
+/* ============ WORKOUTS ============ */
+MOD.workouts=function(){
+  const tab=MOD._wtab||'log';
+  if(tab==='routines'){
+    return head('Workouts')+seg('_wtab',[['log','History'],['routines','Routines'],['prog','Progress']])+
+      DB.workouts.routines.map(r=>`<div class="card"><div class="between mb8"><h3>${esc(r.name)}</h3><span class="row"><button class="btn small ghost" onclick="editRoutine('${r.id}')">Edit</button><button class="btn small soft" onclick="startWorkout('${r.id}')">Start</button></span></div>
+        <div class="sub">${r.ex.map(esc).join(' \u00b7 ')}</div></div>`).join('')+
+      `<button class="btn full soft mt8" onclick="addRoutine()">+ New routine</button>`;
+  }
+  if(tab==='prog'){
+    const bw=DB.workouts.bw;const pts=bw.map((b,i)=>({x:i,y:b.w}));
+    return head('Workouts')+seg('_wtab',[['log','History'],['routines','Routines'],['prog','Progress']])+
+      `<div class="card"><div class="between mb12"><h3>Bodyweight</h3><div class="row">${bw.length?`<span class="acc num" style="font-weight:700">${bw[bw.length-1].w} lb</span>`:''}<button class="btn small soft" onclick="addBW()">+ Log</button></div></div>
+        ${bw.length>1?`<svg class="chart" viewBox="0 0 320 130" preserveAspectRatio="none" style="height:130px">${svgLine(pts,320,130,'#a78bfa',true)}</svg>
+        <div class="between mt8"><span class="tiny">${bw[0].date.slice(5)}</span><span class="tiny">now</span></div>`:`<div class="empty" style="padding:18px">Log your weight a few times and the trendline builds itself.</div>`}</div>
+      <div class="card"><h3 class="mb12">Est. training volume</h3>${DB.workouts.sessions.length>1?volChart():'<div class="empty" style="padding:18px">Finish a few workouts to see volume over time.</div>'}</div>`;
+  }
+  const sess=DB.workouts.sessions.slice().sort((a,b)=>b.date<a.date?-1:1);
+  return head('Workouts',`<button class="btn small soft" onclick="startWorkout()">+ Log</button>`)+
+    seg('_wtab',[['log','History'],['routines','Routines'],['prog','Progress']])+
+    (sess.length?sess.map(s=>`<div class="card between" style="cursor:pointer" onclick="sessionOpts('${s.id}')"><div><h3>${esc(s.routine)}</h3><div class="sub">${fmtDate(s.date)}</div></div>
+      <div style="text-align:right"><div class="num" style="font-weight:700">${(s.volume/1000).toFixed(1)}k</div><div class="tiny">lb volume</div></div></div>`).join(''):`<div class="empty">No sessions yet.</div>`);
+}
+function volChart(){const s=DB.workouts.sessions.slice().sort((a,b)=>a.date<b.date?-1:1);const pts=s.map((x,i)=>({x:i,y:x.volume}));return `<svg class="chart" viewBox="0 0 320 120" preserveAspectRatio="none" style="height:120px">${svgLine(pts,320,120,'#4ade9d',true)}</svg>`;}
+function addRoutine(){openSheet(`<h2 class="mb12">New routine</h2><label>Name</label><input id="rn" placeholder="e.g. Push">
+  <label>Exercises (one per line)</label><textarea id="re" rows="6" placeholder="Incline DB Press\nCable Fly\n\u2026"></textarea>
+  <button class="btn full mt16" onclick="createRoutine()">Save routine</button>`);}
+function createRoutine(){const n=$('#rn').value.trim();if(!n)return toast('Name required');
+  DB.workouts.routines.push({id:uid(),name:n,ex:$('#re').value.split('\n').map(x=>x.trim()).filter(Boolean)});saveDB();closeSheet();render();toast('Routine saved');}
+let liveSession=null;
+function addBW(){openSheet(`<h2 class="mb12">Log bodyweight</h2><label>Weight (lb)</label><input id="bwv" type="number" inputmode="decimal" placeholder="e.g. 172.4">
+  <button class="btn full mt16" onclick="saveBW()">Save</button>`);}
+function saveBW(){const w=parseFloat($('#bwv').value);if(!w)return toast('Enter a weight');
+  const had=DB.workouts.bw.some(b=>b.date===todayISO());DB.workouts.bw=DB.workouts.bw.filter(b=>b.date!==todayISO());DB.workouts.bw.push({date:todayISO(),w});DB.workouts.bw.sort((a,b)=>a.date<b.date?-1:1);saveDB();closeSheet();if(!had)addXP('phys',5);render();}
+function startWorkout(rid){if(!DB.workouts.routines.length){MOD._wtab='routines';render();toast('Create a routine first');return;}
+  const r=rid?DB.workouts.routines.find(x=>x.id===rid):DB.workouts.routines[0];
+  liveSession={routine:r.name,ex:r.ex.map(name=>({name,sets:[{w:'',r:''}]}))};renderLive();}
+function renderLive(){const s=liveSession;
+  const last=DB.workouts.sessions.filter(x=>x.routine===s.routine&&x.entries).sort((a,b)=>a.date<b.date?1:-1)[0];
+  openSheet(`<h2 class="mb12">${esc(s.routine)}</h2>
+    ${s.ex.map((e,ei)=>{const prev=last&&last.entries.find(x=>x.name===e.name);
+      const ghost=prev?prev.sets.filter(st=>st.w&&st.r).map(st=>st.w+'\u00d7'+st.r).join(', '):'';
+      return `<div class="card2 mb12"><h3 class="mb8">${esc(e.name)}</h3>
+      <div class="setrow"><span class="ghost">#</span><span class="ghost">weight</span><span class="ghost">reps</span><span></span></div>
+      ${e.sets.map((st,si)=>`<div class="setrow"><span class="tiny" style="text-align:center">${si+1}</span>
+        <input inputmode="decimal" value="${st.w}" onchange="liveSession.ex[${ei}].sets[${si}].w=this.value" placeholder="\u2013">
+        <input inputmode="numeric" value="${st.r}" onchange="liveSession.ex[${ei}].sets[${si}].r=this.value" placeholder="\u2013">
+        <button class="hcheck" style="width:38px;height:38px;border-width:1.5px" onclick="addSet(${ei})">${ico('plus')}</button></div>`).join('')}
+      ${ghost?`<div class="ghost mt4">Last time: ${ghost}</div>`:''}</div>`;}).join('')}
+    <button class="btn full mt8" onclick="finishWorkout()">Finish workout</button>`);}
+function addSet(ei){liveSession.ex[ei].sets.push({w:'',r:''});renderLive();}
+function finishWorkout(){const vol=liveSession.ex.reduce((s,e)=>s+e.sets.reduce((a,st)=>a+(parseFloat(st.w)||0)*(parseFloat(st.r)||0),0),0);
+  DB.workouts.sessions.push({id:uid(),date:todayISO(),routine:liveSession.routine,volume:Math.round(vol),entries:liveSession.ex});saveDB();liveSession=null;closeSheet();celebrate();addXP('phys',25);render();}
+
+/* ============ NUTRITION ============ */
+MOD.nutrition=function(){
+  const tab=MOD._ntab||'today';const d=todayISO();const foods=DB.nutrition.log[d]||[];
+  const tot=foods.reduce((a,f)=>({cal:a.cal+f.cal,p:a.p+f.p,c:a.c+f.c,f:a.f+f.f}),{cal:0,p:0,c:0,f:0});
+  const t=DB.profile.targets;
+  if(tab==='plan'){
+    return head('Nutrition')+seg('_ntab',[['today','Log'],['plan','Meals']])+
+      (DB.nutrition.meals.length?DB.nutrition.meals.map(m=>`<div class="card"><div class="between"><h3>${esc(m.name)}</h3><span class="chip gold">${'\u2605'.repeat(m.rating)}</span></div>
+        <div class="sub mt8">${m.cal} cal \u00b7 ${m.p}p / ${m.c}c / ${m.f}f</div>
+        <span class="row mt12" style="gap:8px"><button class="btn small soft" onclick="logMeal('${m.id}')">Log this</button><button class="btn small ghost" onclick="editMeal('${m.id}')">Edit</button></span></div>`).join(''):`<div class="empty">Save your go-to meals here with a star rating \u2014<br>then log them in one tap.</div>`)+
+      `<button class="btn full soft mt8" onclick="addMeal()">+ Save a meal</button>`;
+  }
+  return head('Nutrition',`<button class="btn small soft" onclick="addFood()">+ Food</button>`)+
+    seg('_ntab',[['today','Log'],['plan','Meals']])+
+    `<div class="card"><div class="grid2 mb12">
+      ${macroBox('Calories',tot.cal,t.cal,'--ac')}
+      ${macroBox('Protein',tot.p,t.protein,'--good','g')}
+      ${macroBox('Carbs',tot.c,t.carbs,'--gold','g')}
+      ${macroBox('Fat',tot.f,t.fat,'--bad','g')}
+    </div></div>
+    ${foods.length?foods.map((f,i)=>`<div class="card between"><div><h3>${esc(f.name)}</h3><div class="sub mt4">${f.cal} cal \u00b7 ${f.p}p ${f.c}c ${f.f}f</div></div>
+      <button class="btn small danger" onclick="delFood(${i})">\u00d7</button></div>`).join(''):`<div class="empty">Nothing logged today.<br>Tap + Food to start.</div>`}`;
+}
+function macroBox(label,val,tgt,col,u){return `<div class="card2"><div class="tiny">${label}</div><div style="font-size:17px;font-weight:700" class="num">${Math.round(val)}<span class="tiny" style="font-weight:400">/${tgt}${u||''}</span></div>
+  <div class="pbar mt8"><i style="width:${Math.min(100,val/tgt*100)}%;background:var(${col})"></i></div></div>`;}
+function addFood(){const rec=DB.nutrition.recent.map(r=>`<button class="chip dim" style="margin:0 6px 6px 0" onclick="quickFood('${esc(r)}')">${esc(r)}</button>`).join('');
+  openSheet(`<h2 class="mb12">Add food</h2>
+    <div class="seg"><button class="on">Manual</button><button onclick="toast('AI camera runs inside the Claude app version')">\ud83d\udcf7 AI</button><button onclick="toast('Barcode: enter code below')">Barcode</button></div>
+    <div class="mb12"><div class="tiny mb8">RECENT</div>${rec}</div>
+    <label>Food name</label><input id="fn" placeholder="e.g. Chicken & rice bowl">
+    <div class="grid2"><div><label>Calories</label><input id="fc" type="number" inputmode="numeric"></div><div><label>Protein (g)</label><input id="fp" type="number" inputmode="numeric"></div></div>
+    <div class="grid2"><div><label>Carbs (g)</label><input id="fcarb" type="number" inputmode="numeric"></div><div><label>Fat (g)</label><input id="ffat" type="number" inputmode="numeric"></div></div>
+    <button class="btn full mt16" onclick="saveFood()">Add to log</button>`);}
+function quickFood(name){$('#fn').value=name;}
+function saveFood(){const name=$('#fn').value.trim();if(!name)return toast('Name required');const d=todayISO();
+  DB.nutrition.log[d]=DB.nutrition.log[d]||[];DB.nutrition.log[d].push({name,cal:+$('#fc').value||0,p:+$('#fp').value||0,c:+$('#fcarb').value||0,f:+$('#ffat').value||0});
+  if(!DB.nutrition.recent.includes(name)){DB.nutrition.recent.unshift(name);DB.nutrition.recent=DB.nutrition.recent.slice(0,8);}
+  saveDB();closeSheet();addXP('health',3);render();}
+function delFood(i){DB.nutrition.log[todayISO()].splice(i,1);saveDB();render();}
+function logMeal(id){const m=DB.nutrition.meals.find(x=>x.id===id);const d=todayISO();DB.nutrition.log[d]=DB.nutrition.log[d]||[];DB.nutrition.log[d].push({name:m.name,cal:m.cal,p:m.p,c:m.c,f:m.f});saveDB();toast('Meal logged');render();}
+function addMeal(){openSheet(`<h2 class="mb12">Save a meal</h2><label>Name</label><input id="mn" placeholder="e.g. Post-workout bowl">
+  <div class="grid2"><div><label>Calories</label><input id="mc" type="number"></div><div><label>Protein</label><input id="mp" type="number"></div></div>
+  <div class="grid2"><div><label>Carbs</label><input id="mcarb" type="number"></div><div><label>Fat</label><input id="mfat" type="number"></div></div>
+  <label>Rating</label><div class="rate" id="mrate">${[1,2,3,4,5].map(n=>`<button data-n="${n}" onclick="MOD._mrate=${n};document.querySelectorAll('#mrate button').forEach(b=>b.classList.toggle('on',+b.dataset.n<=${n}))">\u2605</button>`).join('')}</div>
+  <button class="btn full mt16" onclick="createMeal()">Save meal</button>`);}
+function createMeal(){const n=$('#mn').value.trim();if(!n)return toast('Name required');
+  DB.nutrition.meals.push({id:uid(),name:n,cal:+$('#mc').value||0,p:+$('#mp').value||0,c:+$('#mcarb').value||0,f:+$('#mfat').value||0,rating:MOD._mrate||4});saveDB();closeSheet();render();toast('Meal saved');}
+function fmtDate(iso){return new Date(iso+'T12:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});}
+
+/* ============ GOALS & TODOS ============ */
+MOD.goals=function(){
+  const tab=MOD._gtab||'goals';
+  if(tab==='todos'){
+    const todos=DB.goals.todos.slice().sort((a,b)=>a.pri-b.pri);
+    return head('Goals & To-Dos',`<button class="btn small soft" onclick="addTodo()">+ To-do</button>`)+
+      seg('_gtab',[['goals','Goals'],['todos','To-Dos']])+
+      `<div class="tiny mb12">Ordered by priority \u2014 most important first</div>`+
+      (todos.length?todos.map(t=>{const overdue=t.due&&!t.done&&t.due<todayISO();
+        return `<div class="card between"><div class="row"><div class="hcheck ${t.done?'done':''}" style="width:34px;height:34px" onclick="toggleTodo('${t.id}')">${t.done?ico('check'):''}</div>
+        <div style="cursor:pointer" onclick="editTodo('${t.id}')"><h3 style="${t.done?'text-decoration:line-through;opacity:.5':''}">${esc(t.name)}</h3>${t.due?`<div class="tiny mt4 ${overdue?'badc':''}">${overdue?'Overdue \u00b7 ':'Due '}${fmtDate(t.due)}</div>`:''}</div></div>
+        <span class="chip ${t.pri===1?'':'dim'}">P${t.pri}</span></div>`;}).join(''):`<div class="empty">Nothing to do.</div>`);
+  }
+  return head('Goals & To-Dos',`<button class="btn small soft" onclick="addGoal()">+ Goal</button>`)+
+    seg('_gtab',[['goals','Goals'],['todos','To-Dos']])+
+    (DB.goals.long.length?DB.goals.long.map(g=>{const done=g.sub.filter(s=>s.done).length;const next=g.sub.find(s=>!s.done);
+      return `<div class="card"><div class="between mb12"><h3 style="cursor:pointer" onclick="editGoal('${g.id}')">${esc(g.name)}</h3><span class="row"><button class="btn small ghost" onclick="editGoal('${g.id}')">Edit</button><span class="tiny num">${done}/${g.sub.length}</span></span></div>
+        <div class="pbar mb12"><i style="width:${done/g.sub.length*100}%"></i></div>
+        ${g.sub.map(s=>`<div class="li" style="padding:9px 0"><div class="hcheck ${s.done?'done':''}" style="width:28px;height:28px;border-width:1.5px" onclick="toggleSub('${g.id}','${s.id}')">${s.done?ico('check'):''}</div>
+          <span style="flex:1;font-size:14px;${s.done?'opacity:.45;text-decoration:line-through':''}">${esc(s.name)}</span>
+          ${next&&next.id===s.id?'<span class="chip">Next</span>':''}</div>`).join('')}</div>`;
+    }).join(''):`<div class="empty">No goals yet. Tap + Goal.<br>Sub-goals feed your dashboard automatically.</div>`);
+}
+function nextSubGoal(){for(const g of DB.goals.long){const s=g.sub.find(x=>!x.done);if(s)return{name:s.name,goal:g.name};}return null;}
+function toggleSub(gid,sid){const g=DB.goals.long.find(x=>x.id===gid);const s=g.sub.find(x=>x.id===sid);s.done=!s.done;saveDB();if(s.done){celebrate();addXP('disc',25);}else addXP('disc',-25);render();}
+function toggleTodo(id){const t=DB.goals.todos.find(x=>x.id===id);t.done=!t.done;saveDB();addXP('disc',t.done?5:-5);render();}
+function addTodo(){openSheet(`<h2 class="mb12">New to-do</h2><label>Task</label><input id="tn" placeholder="What needs doing?">
+  <label>Priority</label><select id="tp"><option value="1">P1 \u2014 Most important</option><option value="2">P2</option><option value="3">P3</option><option value="4">P4 \u2014 Least</option></select>
+  <label>Due date (optional)</label><input id="tdue" type="date">
+  <div class="tiny mt8">Due dates show on your calendar automatically.</div>
+  <button class="btn full mt16" onclick="createTodo()">Add</button>`);}
+function createTodo(){const n=$('#tn').value.trim();if(!n)return toast('Task required');DB.goals.todos.push({id:uid(),name:n,pri:+$('#tp').value,done:false,due:$('#tdue').value||''});saveDB();closeSheet();render();toast('Added');}
+function addGoal(){openSheet(`<h2 class="mb12">New long-term goal</h2><label>Goal</label><input id="gn" placeholder="e.g. Transfer to UT Austin">
+  <label>Sub-goals in order (one per line)</label><textarea id="gs" rows="5" placeholder="First milestone\nSecond milestone\n\u2026"></textarea>
+  <div class="tiny mt8">The next unchecked sub-goal auto-shows on your dashboard.</div>
+  <button class="btn full mt16" onclick="createGoal()">Create goal</button>`);}
+function createGoal(){const n=$('#gn').value.trim();if(!n)return toast('Name required');
+  DB.goals.long.push({id:uid(),name:n,sub:$('#gs').value.split('\n').map(x=>x.trim()).filter(Boolean).map(name=>({id:uid(),name,done:false}))});saveDB();closeSheet();render();toast('Goal created');}
+
+/* ============ TRADING ============ */
+MOD.trading=function(){
+  const tab=MOD._ttab||'log';
+  const trades=DB.trades.slice().sort((a,b)=>a.date<b.date?1:-1);
+  if(tab==='stats'){
+    if(!DB.trades.length)return head('Trading',`<button class="btn small soft" onclick="addTrade()">+ Trade</button>`)+seg('_ttab',[['log','Journal'],['stats','Stats']])+`<div class="empty">Log some trades and your stats build here \u2014<br>win rate, equity curve, and performance by setup.</div>`;
+    const real=DB.trades.filter(t=>!t.sim);const wins=real.filter(t=>t.pnl>0);const losses=real.filter(t=>t.pnl<=0);
+    const wr=real.length?Math.round(wins.length/real.length*100):0;
+    const avgW=wins.length?Math.round(wins.reduce((s,t)=>s+t.pnl,0)/wins.length):0;
+    const avgL=losses.length?Math.round(losses.reduce((s,t)=>s+t.pnl,0)/losses.length):0;
+    const eqPts=DB.trades.map((t,i)=>({x:i,y:t.eq}));
+    const bySetup={};DB.trades.forEach(t=>{bySetup[t.setup]=bySetup[t.setup]||{n:0,pnl:0};bySetup[t.setup].n++;bySetup[t.setup].pnl+=t.pnl;});
+    return head('Trading')+seg('_ttab',[['log','Journal'],['stats','Stats']])+
+      `<div class="card"><h3 class="mb12">Equity curve</h3><svg class="chart" viewBox="0 0 320 130" preserveAspectRatio="none" style="height:130px">${svgLine(eqPts,320,130,eqPts[eqPts.length-1].y>=0?'#4ade9d':'#f27a7a',true)}</svg></div>
+      <div class="grid2"><div class="card2"><div class="tiny">Win rate</div><div style="font-size:22px;font-weight:700" class="num acc">${wr}%</div></div>
+        <div class="card2"><div class="tiny">Total P&L</div><div style="font-size:22px;font-weight:700" class="num ${eqPts[eqPts.length-1].y>=0?'goodc':'badc'}">${eqPts[eqPts.length-1].y>=0?'+':''}$${eqPts[eqPts.length-1].y}</div></div>
+        <div class="card2"><div class="tiny">Avg win</div><div style="font-size:17px;font-weight:700" class="num goodc">+$${avgW}</div></div>
+        <div class="card2"><div class="tiny">Avg loss</div><div style="font-size:17px;font-weight:700" class="num badc">$${avgL}</div></div></div>
+      <div class="card mt12"><h3 class="mb12">By setup</h3>${Object.entries(bySetup).map(([k,v])=>`<div class="between li"><span style="font-size:14px">${esc(k)} <span class="tiny">(${v.n})</span></span><span class="num ${v.pnl>=0?'goodc':'badc'}" style="font-weight:700">${v.pnl>=0?'+':''}$${v.pnl}</span></div>`).join('')}</div>`;
+  }
+  return head('Trading',`<button class="btn small soft" onclick="addTrade()">+ Trade</button>`)+
+    seg('_ttab',[['log','Journal'],['stats','Stats']])+
+    (trades.length?trades.map(t=>`<div class="card" style="cursor:pointer" onclick="editTrade('${t.id}')"><div class="between"><div class="row"><h3>${esc(t.sym)}</h3><span class="chip dim">${t.dir}</span>${t.sim?'<span class="chip dim">SIM</span>':''}</div>
+      <span class="num" style="font-weight:700;font-size:17px" class2="${t.pnl>=0?'goodc':'badc'}"><span class="${t.pnl>=0?'goodc':'badc'}">${t.pnl>=0?'+':''}$${t.pnl}</span></span></div>
+      <div class="sub mt8">${fmtDate(t.date)} \u00b7 ${esc(t.setup)}</div>
+      <div class="row mt8" style="gap:6px">${t.validSetup?'<span class="chip good">Valid setup</span>':'<span class="chip bad">Invalid</span>'}${t.followedRules?'<span class="chip good">Rules followed</span>':'<span class="chip bad">Broke rules</span>'}<span class="chip dim">${esc(t.emotion)}</span></div></div>`).join(''):`<div class="empty">No trades yet.<br>Tap + Trade to journal your first one.</div>`);
+}
+function tradeWinRate(){const r=DB.trades.filter(t=>!t.sim);if(!r.length)return 0;return Math.round(r.filter(t=>t.pnl>0).length/r.length*100);}
+function addTrade(){openSheet(`<h2 class="mb12">Log trade</h2>
+  <div class="grid2"><div><label>Ticker</label><input id="tsym" placeholder="SPY" style="text-transform:uppercase"></div>
+    <div><label>Direction</label><select id="tdir"><option>Long</option><option>Short</option></select></div></div>
+  <div class="grid2"><div><label>Entry</label><input id="ten" type="number" inputmode="decimal"></div><div><label>Exit</label><input id="tex" type="number" inputmode="decimal"></div></div>
+  <div class="grid2"><div><label>Shares/size</label><input id="tsz" type="number" inputmode="decimal"></div>
+    <div><label>Setup</label><select id="tset"><option>Breakout</option><option>Pullback</option><option>Reversal</option><option>Gap fill</option><option>Other</option></select></div></div>
+  <label>Emotion</label><input id="temo" placeholder="Calm / FOMO / Revenge\u2026">
+  <div class="row mt12" style="gap:8px"><label style="margin:0"><input type="checkbox" id="tvs" style="width:auto;display:inline;margin-right:6px">Valid setup</label>
+    <label style="margin:0"><input type="checkbox" id="tfr" style="width:auto;display:inline;margin-right:6px">Followed rules</label></div>
+  <label style="margin-top:14px"><input type="checkbox" id="tsim" style="width:auto;display:inline;margin-right:6px">Sim / paper trade</label>
+  <label>Lesson</label><textarea id="tles" rows="2" placeholder="One takeaway\u2026"></textarea>
+  <button class="btn full mt16" onclick="createTrade()">Log trade</button>`);}
+function createTrade(){const sym=($('#tsym').value||'').toUpperCase().trim();if(!sym)return toast('Ticker required');
+  const en=+$('#ten').value,ex=+$('#tex').value,sz=+$('#tsz').value||1;const dir=$('#tdir').value;
+  let pnl=Math.round((dir==='Long'?ex-en:en-ex)*sz);if(isNaN(pnl))pnl=0;
+  const prevEq=DB.trades.length?DB.trades[DB.trades.length-1].eq:0;
+  const fr=$('#tfr').checked;
+  DB.trades.push({id:uid(),date:todayISO(),sym,dir,pnl,setup:$('#tset').value,emotion:$('#temo').value||'\u2014',validSetup:$('#tvs').checked,followedRules:fr,sim:$('#tsim').checked,lesson:$('#tles').value,eq:prevEq+pnl});
+  saveDB();closeSheet();addXP('wealth',fr?15:8);render();}
+
+/* ============ FINANCE ============ */
+MOD.finance=function(){
+  const f=DB.finance;const nw=calcNetWorth();
+  const acctTot=f.accounts.reduce((s,a)=>s+a.bal,0);
+  const holdTot=f.holdings.reduce((s,h)=>s+h.qty*h.price,0);
+  const debtTot=f.debt.reduce((s,d)=>s+d.bal,0);
+  let out=head('Finance',`<button class="btn small soft" onclick="finAdd()">+ Add</button>`);
+  out+=`<div class="card" style="background:linear-gradient(135deg,#1c1630,#16141e)"><div class="tiny">NET WORTH</div>
+    <div style="font-size:30px;font-weight:700" class="num ${nw>=0?'':'badc'}">$${nw.toLocaleString()}</div>
+    <div class="row mt12" style="gap:16px"><span class="tiny">Cash <b class="acc">$${acctTot.toLocaleString()}</b></span><span class="tiny">Invest <b class="goodc">$${Math.round(holdTot).toLocaleString()}</b></span><span class="tiny">Debt <b class="badc">$${debtTot.toLocaleString()}</b></span></div></div>`;
+  if(f.enabled.includes('accounts'))out+=`<div class="card"><h3 class="mb12">Accounts</h3>${f.accounts.map(a=>`<div class="between li" style="cursor:pointer" onclick="editFin('accounts','${a.id}')"><span>${esc(a.name)}</span><span class="num" style="font-weight:600">$${a.bal.toLocaleString()}</span></div>`).join('')}</div>`;
+  if(f.enabled.includes('holdings'))out+=`<div class="card"><h3 class="mb12">Holdings</h3>${f.holdings.map(h=>`<div class="between li" style="cursor:pointer" onclick="editFin('holdings','${h.id}')"><div><span style="font-weight:600">${esc(h.sym)}</span> <span class="tiny">${h.qty} @ $${h.price.toLocaleString()}</span></div><span class="num goodc" style="font-weight:600">$${Math.round(h.qty*h.price).toLocaleString()}</span></div>`).join('')}</div>`;
+  if(f.enabled.includes('income'))out+=`<div class="card"><div class="between mb12"><h3>Income (tips)</h3><span class="tiny">this month</span></div>${f.income.map(i=>`<div class="between li" style="cursor:pointer" onclick="editFin('income','${i.id}')"><div><span style="font-weight:600">$${i.amt}</span> <span class="tiny">${esc(i.note)}</span></div><span class="tiny">${fmtDate(i.date)}</span></div>`).join('')}</div>`;
+  if(f.enabled.includes('savings'))out+=`<div class="card"><h3 class="mb12">Savings goals</h3>${f.savings.map(s=>`<div class="mb12" style="cursor:pointer" onclick="editFin('savings','${s.id}')"><div class="between mb8"><span style="font-weight:600">${esc(s.name)}</span><span class="tiny num">$${s.cur.toLocaleString()} / $${s.goal.toLocaleString()}</span></div><div class="pbar"><i style="width:${s.cur/s.goal*100}%;background:var(--gold)"></i></div></div>`).join('')}</div>`;
+  if(f.enabled.includes('debt'))out+=`<div class="card"><h3 class="mb12">Debt</h3>${f.debt.map(d=>`<div class="between li" style="cursor:pointer" onclick="editFin('debt','${d.id}')"><div><span style="font-weight:600">${esc(d.name)}</span> <span class="tiny">min $${d.min}/mo</span></div><span class="num badc" style="font-weight:600">$${d.bal.toLocaleString()}</span></div>`).join('')}</div>`;
+  return out;
+}
+function calcNetWorth(){const f=DB.finance;return Math.round(f.accounts.reduce((s,a)=>s+a.bal,0)+f.holdings.reduce((s,h)=>s+h.qty*h.price,0)-f.debt.reduce((s,d)=>s+d.bal,0));}
+function finAdd(){openSheet(`<h2 class="mb12">Add to finance</h2>
+  <label>Category</label><select id="fcat"><option value="accounts">Account</option><option value="holdings">Holding (stock/crypto)</option><option value="income">Income entry</option><option value="savings">Savings goal</option><option value="debt">Debt</option></select>
+  <div id="ffields"></div><button class="btn full mt16" onclick="finCreate()">Add</button>`);
+  const fields={accounts:'<label>Name</label><input id="x1" placeholder="Checking"><label>Balance</label><input id="x2" type="number">',
+    holdings:'<label>Symbol</label><input id="x1" placeholder="VOO" style="text-transform:uppercase"><div class="grid2"><div><label>Qty</label><input id="x2" type="number"></div><div><label>Price</label><input id="x3" type="number"></div></div>',
+    income:'<label>Amount</label><input id="x1" type="number"><label>Note</label><input id="x2" placeholder="Serving shift">',
+    savings:'<label>Name</label><input id="x1" placeholder="Tuition fund"><div class="grid2"><div><label>Current</label><input id="x2" type="number"></div><div><label>Goal</label><input id="x3" type="number"></div></div>',
+    debt:'<label>Name</label><input id="x1" placeholder="Car loan"><div class="grid2"><div><label>Balance</label><input id="x2" type="number"></div><div><label>Min/mo</label><input id="x3" type="number"></div></div>'};
+  const upd=()=>$('#ffields').innerHTML=fields[$('#fcat').value];upd();$('#fcat').onchange=upd;}
+function finCreate(){const c=$('#fcat').value;const v=id=>$('#'+id)?$('#'+id).value:'';const f=DB.finance;if(!f.enabled.includes(c))f.enabled.push(c);
+  if(c==='accounts')f.accounts.push({id:uid(),name:v('x1')||'Account',bal:+v('x2')||0});
+  else if(c==='holdings')f.holdings.push({id:uid(),sym:(v('x1')||'').toUpperCase(),qty:+v('x2')||0,price:+v('x3')||0});
+  else if(c==='income')f.income.unshift({id:uid(),date:todayISO(),amt:+v('x1')||0,note:v('x2')||''});
+  else if(c==='savings')f.savings.push({id:uid(),name:v('x1')||'Goal',cur:+v('x2')||0,goal:+v('x3')||1});
+  else if(c==='debt')f.debt.push({id:uid(),name:v('x1')||'Debt',bal:+v('x2')||0,min:+v('x3')||0});
+  saveDB();closeSheet();addXP('wealth',5);render();}
+
+/* ============ PHOTOS ============ */
+MOD.photos=function(){
+  const ps=DB.photos.slice().sort((a,b)=>a.date<b.date?1:-1);
+  return head('Progress Photos',`<button class="btn small soft" onclick="document.getElementById('photoIn').click()">+ Photo</button>`)+
+    `<input type="file" id="photoIn" accept="image/*" capture="environment" style="display:none" onchange="savePhoto(this)">
+    <div class="tiny mb12">Date-labeled grid</div>
+    ${ps.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    ${ps.map(p=>`<div class="card" style="padding:0;overflow:hidden;aspect-ratio:3/4;position:relative;background:var(--card2);cursor:pointer" onclick="photoOpts('${p.id}')">
+      ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover">`:`<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tx3)">${ico('camera')}</div>`}
+      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(14,13,19,.75);padding:6px 9px" class="tiny">${fmtDate(p.date)}${p.tag?' \u00b7 '+esc(p.tag):''}</div></div>`).join('')}
+    </div>`:`<div class="empty">No photos yet.<br>Tap + Photo to take your first progress shot.</div>`}`;
+}
+function savePhoto(input){const f=input.files[0];if(!f)return;
+  const img=new Image();const rd=new FileReader();
+  rd.onload=e=>{img.onload=()=>{const c=document.createElement('canvas');const scale=Math.min(1,900/img.width);c.width=img.width*scale;c.height=img.height*scale;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    try{DB.photos.push({id:uid(),date:todayISO(),tag:'',img:c.toDataURL('image/jpeg',.7)});saveDB();addXP('phys',5);render();}
+    catch(err){toast('Storage full \u2014 delete old photos');}};
+    img.src=e.target.result;};
+  rd.readAsDataURL(f);}
+
+/* ============ CALENDAR ============ */
+let calMonth=new Date().getMonth(),calYear=new Date().getFullYear();
+function Calendar(){
+  const first=new Date(calYear,calMonth,1);const startDow=first.getDay();const dim=new Date(calYear,calMonth+1,0).getDate();
+  const monthName=first.toLocaleDateString(undefined,{month:'long',year:'numeric'});
+  let cells='';
+  for(let i=0;i<startDow;i++)cells+='<div></div>';
+  for(let d=1;d<=dim;d++){const iso=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=iso===todayISO();const dots=dayDots(iso);
+    cells+=`<div class="cald ${isToday?'today':''}" onclick="dayDetail('${iso}')"><span>${d}</span>${dots?`<div class="dots">${dots}</div>`:''}</div>`;}
+  return `<div class="between mb16"><h1>Calendar</h1><div class="row"><button class="btn small ghost" onclick="calNav(-1)">\u2039</button><button class="btn small ghost" onclick="calNav(1)">\u203a</button></div></div>
+    <div class="between mb12"><h2>${monthName}</h2><button class="btn small soft" onclick="addEvent()">+ Event</button></div>
+    <div class="card"><div class="cal mb8">${['S','M','T','W','T','F','S'].map(x=>`<div class="dh">${x}</div>`).join('')}</div>
+      <div class="cal">${cells}</div></div>
+    <div class="row mt12" style="gap:12px;flex-wrap:wrap">
+      <span class="tiny row"><i style="width:7px;height:7px;border-radius:50%;background:var(--ac);display:inline-block;margin-right:5px"></i>Habits</span>
+      <span class="tiny row"><i style="width:7px;height:7px;border-radius:50%;background:var(--good);display:inline-block;margin-right:5px"></i>Peptide</span>
+      <span class="tiny row"><i style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:5px"></i>Workout</span>
+      <span class="tiny row"><i style="width:7px;height:7px;border-radius:50%;background:var(--bad);display:inline-block;margin-right:5px"></i>Event / due</span>
+    </div>
+    ${upcomingList()}
+    <div class="tiny mt12" style="text-align:center">Tap any day \u2014 past shows what you logged, future shows what\u2019s planned</div>`;
+}
+function upcomingList(){
+  const items=[...DB.events.map(e=>({date:e.date,title:e.title,kind:'event',id:e.id})),
+    ...DB.goals.todos.filter(t=>t.due&&!t.done).map(t=>({date:t.due,title:t.name,kind:'todo',id:t.id}))]
+    .filter(x=>x.date>=todayISO()).sort((a,b)=>a.date<b.date?-1:1).slice(0,6);
+  if(!items.length)return '';
+  return `<div class="card mt12"><h3 class="mb8">Upcoming</h3>${items.map(x=>`<div class="between li"><div class="row"><span class="chip ${x.kind==='todo'?'':'bad'}" style="min-width:0">${x.kind==='todo'?'To-do':'Event'}</span><span style="font-size:14px">${esc(x.title)}</span></div><span class="tiny">${fmtDate(x.date)}</span></div>`).join('')}</div>`;
+}
+function addEvent(dateISO){openSheet(`<h2 class="mb12">New event</h2>
+  <label>Title</label><input id="evt" placeholder="e.g. Closing shift / Exam / Trip">
+  <label>Date</label><input id="evd" type="date" value="${dateISO||todayISO()}">
+  <button class="btn full mt16" onclick="createEvent()">Save to calendar</button>`);}
+function createEvent(){const t=$('#evt').value.trim();if(!t)return toast('Title required');
+  DB.events.push({id:uid(),date:$('#evd').value||todayISO(),title:t});saveDB();closeSheet();render();toast('Event saved');}
+function delEvent(id){DB.events=DB.events.filter(e=>e.id!==id);saveDB();closeSheet();render();toast('Event removed');}
+function calNav(dir){calMonth+=dir;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}render();}
+function dayDots(iso){let d='';const anyHabit=DB.habits.some(h=>hDone(h,iso));const anyPep=DB.peptides.some(p=>p.log[iso]);const anyWork=DB.workouts.sessions.some(s=>s.date===iso);
+  const anyPlan=DB.events.some(e=>e.date===iso)||DB.goals.todos.some(t=>t.due===iso&&!t.done);
+  if(anyHabit)d+='<i style="background:var(--ac)"></i>';if(anyPep)d+='<i style="background:var(--good)"></i>';if(anyWork)d+='<i style="background:var(--gold)"></i>';if(anyPlan)d+='<i style="background:var(--bad)"></i>';return d;}
+function dayDetail(iso){const habits=DB.habits.filter(h=>hDone(h,iso));const peps=DB.peptides.filter(p=>p.log[iso]);
+  const foods=DB.nutrition.log[iso]||[];const cal=foods.reduce((s,f)=>s+f.cal,0);const work=DB.workouts.sessions.filter(s=>s.date===iso);
+  const r=DB.ratings[iso];const jr=DB.journal[iso];const trades=DB.trades.filter(t=>t.date===iso);
+  const evts=DB.events.filter(e=>e.date===iso);const dues=DB.goals.todos.filter(t=>t.due===iso);
+  let h=`<h2 class="mb4">${new Date(iso+'T12:00').toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'})}</h2>`;
+  const sec=(t,c)=>c?`<div class="card2 mb8"><div class="tiny mb8">${t}</div>${c}</div>`:'';
+  h+=sec('EVENTS',evts.length?evts.map(e=>`<div class="between" style="padding:4px 0"><span style="font-size:14px">${esc(e.title)}</span><button class="btn small danger" onclick="delEvent('${e.id}')">\u00d7</button></div>`).join(''):'');
+  h+=sec('DUE',dues.length?dues.map(t=>`<div class="row" style="padding:4px 0;gap:8px"><div class="hcheck ${t.done?'done':''}" style="width:26px;height:26px;border-width:1.5px" onclick="toggleTodo('${t.id}');dayDetail('${iso}')">${t.done?ico('check'):''}</div><span style="font-size:14px;${t.done?'opacity:.5;text-decoration:line-through':''}">${esc(t.name)}</span></div>`).join(''):'');
+  h+=sec('HABITS',habits.length?habits.map(x=>`<span class="chip" style="margin:0 5px 5px 0">${esc(x.name)}</span>`).join(''):'');
+  h+=sec('PEPTIDES',peps.length?peps.map(x=>`<span class="chip good" style="margin:0 5px 5px 0">${esc(x.name)}</span>`).join(''):'');
+  h+=sec('WORKOUT',work.length?work.map(w=>`<div style="font-size:14px">${esc(w.routine)} \u2014 ${(w.volume/1000).toFixed(1)}k lb</div>`).join(''):'');
+  h+=sec('NUTRITION',foods.length?`<div style="font-size:14px">${cal} cal \u00b7 ${foods.length} items</div>`:'');
+  h+=sec('TRADING',trades.length?trades.map(t=>`<div style="font-size:14px">${esc(t.sym)} <span class="${t.pnl>=0?'goodc':'badc'}">${t.pnl>=0?'+':''}$${t.pnl}</span></div>`).join(''):'');
+  h+=sec('RATINGS',r?`<div class="row" style="gap:14px;font-size:14px"><span>Mood ${r.mood}</span><span>Energy ${r.energy}</span><span>Focus ${r.focus}</span></div>`:'');
+  h+=sec('JOURNAL',jr?`<div style="font-size:14px;line-height:1.5">${esc(jr)}</div>`:'');
+  if(!habits.length&&!peps.length&&!foods.length&&!work.length&&!trades.length&&!r&&!jr&&!evts.length&&!dues.length)h+=`<div class="empty" style="padding:20px">Nothing here yet.</div>`;
+  h+=`<button class="btn soft full mt8" onclick="addEvent('${iso}')">+ Add event on this day</button>`;
+  openSheet(h);
+}
+
+/* ============ ANALYTICS ============ */
+function Analytics(){
+  const days=[...Array(14)].map((_,i)=>daysAgo(13-i));
+  const energyPts=days.map((d,i)=>({x:i,y:(DB.ratings[d]||{}).energy||0})).filter(p=>p.y);
+  const habitPts=DB.habits.length?days.map((d,i)=>({x:i,y:DB.habits.filter(h=>hDone(h,d)).length/DB.habits.length*100})):[];
+  const insights=genInsights();
+  const review=weeklyReview();
+  return `<h1 class="mb16">Analytics</h1>
+    <div class="card"><h3 class="mb12">Insights</h3>${insights.length?insights.map(i=>`<div class="li" style="align-items:flex-start"><span class="acc" style="margin-top:2px">${ico('chart').replace('width="2"','')}</span><span style="flex:1;font-size:13.5px;line-height:1.5">${i}</span></div>`).join(''):`<div class="empty" style="padding:16px">Log a few days across your modules and patterns start showing up here.</div>`}</div>
+    <div class="card"><h3 class="mb12">Energy \u2014 14 days</h3>${energyPts.length>1?`<svg class="chart" viewBox="0 0 320 110" preserveAspectRatio="none" style="height:110px">${svgLine(energyPts,320,110,'#4ade9d',true)}</svg>`:`<div class="empty" style="padding:16px">Rate your energy on the Habits tab to build this chart.</div>`}</div>
+    <div class="card"><h3 class="mb12">Habit consistency \u2014 14 days</h3>${habitPts.length?`<svg class="chart" viewBox="0 0 320 110" preserveAspectRatio="none" style="height:110px">${svgLine(habitPts,320,110,'#a78bfa',true)}</svg>`:`<div class="empty" style="padding:16px">Add habits and this fills in.</div>`}</div>
+    <div class="card" style="background:linear-gradient(135deg,#1c1630,#16141e)"><div class="between mb12"><h3>Weekly review</h3><span class="chip">Auto</span></div>
+      ${review.map(r=>`<div class="between li"><span class="sub">${r[0]}</span><span style="font-weight:700" class="num">${r[1]}</span></div>`).join('')}</div>`;
+}
+function genInsights(){const out=[];
+  let hiHabDays=0,hiHabEnergy=0;
+  if(DB.habits.length){for(let i=0;i<21;i++){const d=daysAgo(i);const done=DB.habits.filter(h=>hDone(h,d)).length/DB.habits.length;const e=(DB.ratings[d]||{}).energy;if(e&&done>=.7){hiHabDays++;hiHabEnergy+=e;}}}
+  if(hiHabDays>2)out.push(`Your energy averages <b class="acc">${(hiHabEnergy/hiHabDays).toFixed(1)}/10</b> on days you complete 70%+ of your habits.`);
+  const realTrades=DB.trades.filter(t=>!t.sim);
+  if(realTrades.length>4)out.push(`Trading win rate sits at <b class="acc">${tradeWinRate()}%</b> \u2014 check the Stats tab for your best setup.`);
+  const bw=DB.workouts.bw;
+  if(bw.length>3){const gain=(bw[bw.length-1].w-bw[0].w).toFixed(1);out.push(`Bodyweight is ${+gain>=0?'up':'down'} <b class="acc">${Math.abs(gain)} lb</b> since you started logging.`);}
+  if(DB.habits.length){const best=DB.habits.map(h=>[h.name,streak(h)]).sort((a,b)=>b[1]-a[1])[0];if(best&&best[1]>2)out.push(`Longest active streak: <b class="acc">${esc(best[0])}</b> at ${best[1]} days. Protect it.`);}
+  return out;
+}
+function weeklyReview(){
+  let habDone=0,habTot=0;for(let i=0;i<7;i++){const d=daysAgo(i);DB.habits.forEach(h=>{habTot++;if(hDone(h,d))habDone++;});}
+  const workouts=DB.workouts.sessions.filter(s=>daysSince(s.date)<7).length;
+  const trades=DB.trades.filter(t=>daysSince(t.date)<7);const pnl=trades.reduce((s,t)=>s+t.pnl,0);
+  const peps=DB.peptides.reduce((s,p)=>s+Object.keys(p.log).filter(d=>daysSince(d)<7&&p.log[d]).length,0);
+  return [['Habits completed',habTot?Math.round(habDone/habTot*100)+'%':'\u2014'],['Workouts',workouts],['Peptide doses',peps],['Trades',trades.length],['Week P&L',trades.length?(pnl>=0?'+':'')+'$'+pnl:'\u2014']];
+}
+
+/* ============ PROFILE ============ */
+function Profile(){const t=DB.profile.targets;
+  return `<h1 class="mb16">Profile</h1>
+    <div class="card row"><div class="ic" style="width:52px;height:52px;border-radius:16px;background:var(--acd);color:var(--ac);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700">${esc(DB.profile.name[0]||'B')}</div>
+      <div><h2>${esc(DB.profile.name)}</h2><div class="sub">${esc(DB.profile.phase)} phase</div></div></div>
+    <div class="card"><h3 class="mb12">Daily macro targets</h3>
+      <div class="grid2"><div><label>Calories</label><input type="number" value="${t.cal}" onchange="DB.profile.targets.cal=+this.value;saveDB()"></div>
+      <div><label>Protein (g)</label><input type="number" value="${t.protein}" onchange="DB.profile.targets.protein=+this.value;saveDB()"></div>
+      <div><label>Carbs (g)</label><input type="number" value="${t.carbs}" onchange="DB.profile.targets.carbs=+this.value;saveDB()"></div>
+      <div><label>Fat (g)</label><input type="number" value="${t.fat}" onchange="DB.profile.targets.fat=+this.value;saveDB()"></div></div></div>
+    <div class="card"><h3 class="mb12">Settings</h3>
+      <label>Name</label><input value="${esc(DB.profile.name)}" onchange="DB.profile.name=this.value;saveDB()">
+      <label>Current phase</label><input value="${esc(DB.profile.phase)}" onchange="DB.profile.phase=this.value;saveDB()">
+    </div>
+    <button class="btn full danger" onclick="wipeData()">Reset all data</button>
+    <div class="tiny mt12" style="text-align:center;line-height:1.6">Your data is saved on this device only.<br>Add to Home Screen via Safari share menu to use as an app.</div>`;
+}
+function wipeData(){if(confirm('Erase everything and start fresh? This can\u2019t be undone.')){localStorage.removeItem(KEY);DB=seed();saveDB();go('dash');toast('Fresh start');}}
+
+/* ============ QUICK LOG ============ */
+function quickLog(){openSheet(`<h2 class="mb16">Quick log</h2>
+  <div class="grid2" style="gap:12px">
+    ${[['Log food','fork','goNut'],['Log dose','vial','goPep'],['Start workout','dumbbell','goWork'],['Log trade','chart','goTrade'],['Check habits','flame','goHab'],['Add to-do','target','goTodo']].map(q=>
+      `<div class="tile" onclick="${q[2]}()"><div class="ic" style="background:var(--acd);color:var(--ac)">${ico(q[1])}</div><h3>${q[0]}</h3></div>`).join('')}
+  </div>`);}
+function goNut(){closeSheet();push('nutrition');setTimeout(addFood,300);}
+function goPep(){closeSheet();push('peptides');}
+function goWork(){closeSheet();push('workouts');setTimeout(()=>startWorkout(),300);}
+function goTrade(){closeSheet();push('trading');setTimeout(addTrade,300);}
+function goHab(){closeSheet();push('habits');}
+function goTodo(){closeSheet();MOD._gtab='todos';push('goals');setTimeout(addTodo,300);}
+
+/* ============ BINDING ============ */
+function bind(){
+  document.querySelectorAll('[data-mod]').forEach(t=>t.onclick=()=>push(t.dataset.mod));
+  document.querySelectorAll('[data-h]').forEach(el=>el.onclick=()=>toggleHabit(el.dataset.h));
+  document.querySelectorAll('[data-pep]').forEach(el=>el.onclick=()=>togglePep(el.dataset.pep));
+  document.querySelectorAll('[data-rate]').forEach(box=>{box.querySelectorAll('button').forEach(b=>b.onclick=()=>setRate(box.dataset.rate,+b.dataset.n));});
+}
+
+/* ============ EDIT / DELETE EVERYTHING ============ */
+function editHabit(id){const h=DB.habits.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit habit</h2>
+  <label>Name</label><input id="hn" value="${esc(h.name)}">
+  <label>Type</label><select id="ht"><option value="check" ${h.type==='check'?'selected':''}>Simple check</option><option value="qty" ${h.type==='qty'?'selected':''}>Quantity</option><option value="dur" ${h.type==='dur'?'selected':''}>Duration</option></select>
+  <div id="htgt" style="display:${h.type==='check'?'none':'block'}"><label>Target</label><div class="row"><input type="number" id="htv" value="${h.target}" style="flex:1"><input id="htu" value="${esc(h.unit)}" placeholder="unit" style="flex:1"></div></div>
+  <button class="btn full mt16" onclick="saveHabitEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delHabit('${id}')">Delete habit</button>`);
+  $('#ht').onchange=e=>{$('#htgt').style.display=e.target.value==='check'?'none':'block';};}
+function saveHabitEdit(id){const h=DB.habits.find(x=>x.id===id);const n=$('#hn').value.trim();if(!n)return toast('Name required');
+  h.name=n;h.type=$('#ht').value;h.target=h.type==='check'?1:(parseFloat($('#htv').value)||1);h.unit=h.type==='check'?'':($('#htu').value||'');
+  saveDB();closeSheet();render();toast('Saved');}
+function delHabit(id){if(!confirm('Delete this habit and its history?'))return;DB.habits=DB.habits.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function editPeptide(id){const p=DB.peptides.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit protocol</h2>
+  <label>Compound</label><input id="pc2" value="${esc(p.name)}">
+  <label>Dose</label><input id="pd" value="${esc(p.dose)}">
+  <label>Frequency</label><input id="pf" value="${esc(p.freq)}">
+  <label>Injection site</label><input id="ps" value="${esc(p.site)}">
+  <label>Cycle length (days)</label><input id="pl" type="number" value="${p.cycleLen}">
+  <button class="btn full mt16" onclick="savePepEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delPeptide('${id}')">Delete protocol</button>`);}
+function savePepEdit(id){const p=DB.peptides.find(x=>x.id===id);const n=$('#pc2').value.trim();if(!n)return toast('Name required');
+  p.name=n;p.dose=$('#pd').value||'\u2014';p.freq=$('#pf').value||'Daily';p.site=$('#ps').value||'\u2014';p.cycleLen=parseInt($('#pl').value)||28;
+  saveDB();closeSheet();render();toast('Saved');}
+function delPeptide(id){if(!confirm('Delete this protocol and its dose history?'))return;DB.peptides=DB.peptides.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function editRoutine(id){const r=DB.workouts.routines.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit routine</h2><label>Name</label><input id="rn" value="${esc(r.name)}">
+  <label>Exercises (one per line)</label><textarea id="re" rows="6">${r.ex.map(esc).join('\n')}</textarea>
+  <button class="btn full mt16" onclick="saveRoutineEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delRoutine('${id}')">Delete routine</button>`);}
+function saveRoutineEdit(id){const r=DB.workouts.routines.find(x=>x.id===id);const n=$('#rn').value.trim();if(!n)return toast('Name required');
+  r.name=n;r.ex=$('#re').value.split('\n').map(x=>x.trim()).filter(Boolean);saveDB();closeSheet();render();toast('Saved');}
+function delRoutine(id){if(!confirm('Delete this routine? (Past sessions stay.)'))return;DB.workouts.routines=DB.workouts.routines.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function sessionOpts(id){const s=DB.workouts.sessions.find(x=>x.id===id);
+  openSheet(`<h2 class="mb4">${esc(s.routine)}</h2><div class="sub mb12">${fmtDate(s.date)} \u00b7 ${(s.volume/1000).toFixed(1)}k lb volume</div>
+  ${s.entries?s.entries.map(e=>`<div class="card2 mb8"><h3 class="mb4">${esc(e.name)}</h3><div class="sub">${e.sets.filter(st=>st.w&&st.r).map(st=>st.w+'\u00d7'+st.r).join(', ')||'\u2014'}</div></div>`).join(''):''}
+  <button class="btn full danger mt8" onclick="delSession('${id}')">Delete session</button>`);}
+function delSession(id){if(!confirm('Delete this workout session?'))return;DB.workouts.sessions=DB.workouts.sessions.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function editMeal(id){const m=DB.nutrition.meals.find(x=>x.id===id);MOD._mrate=m.rating;
+  openSheet(`<h2 class="mb12">Edit meal</h2><label>Name</label><input id="mn" value="${esc(m.name)}">
+  <div class="grid2"><div><label>Calories</label><input id="mc" type="number" value="${m.cal}"></div><div><label>Protein</label><input id="mp" type="number" value="${m.p}"></div></div>
+  <div class="grid2"><div><label>Carbs</label><input id="mcarb" type="number" value="${m.c}"></div><div><label>Fat</label><input id="mfat" type="number" value="${m.f}"></div></div>
+  <label>Rating</label><div class="rate" id="mrate">${[1,2,3,4,5].map(n=>`<button data-n="${n}" class="${n<=m.rating?'on':''}" onclick="MOD._mrate=${n};document.querySelectorAll('#mrate button').forEach(b=>b.classList.toggle('on',+b.dataset.n<=${n}))">\u2605</button>`).join('')}</div>
+  <button class="btn full mt16" onclick="saveMealEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delMeal('${id}')">Delete meal</button>`);}
+function saveMealEdit(id){const m=DB.nutrition.meals.find(x=>x.id===id);const n=$('#mn').value.trim();if(!n)return toast('Name required');
+  m.name=n;m.cal=+$('#mc').value||0;m.p=+$('#mp').value||0;m.c=+$('#mcarb').value||0;m.f=+$('#mfat').value||0;m.rating=MOD._mrate||m.rating;
+  saveDB();closeSheet();render();toast('Saved');}
+function delMeal(id){if(!confirm('Delete this saved meal?'))return;DB.nutrition.meals=DB.nutrition.meals.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function editTodo(id){const t=DB.goals.todos.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit to-do</h2><label>Task</label><input id="tn" value="${esc(t.name)}">
+  <label>Priority</label><select id="tp">${[1,2,3,4].map(n=>`<option value="${n}" ${t.pri===n?'selected':''}>P${n}${n===1?' \u2014 Most important':n===4?' \u2014 Least':''}</option>`).join('')}</select>
+  <label>Due date (optional)</label><input id="tdue" type="date" value="${t.due||''}">
+  <button class="btn full mt16" onclick="saveTodoEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delTodo('${id}')">Delete to-do</button>`);}
+function saveTodoEdit(id){const t=DB.goals.todos.find(x=>x.id===id);const n=$('#tn').value.trim();if(!n)return toast('Task required');
+  t.name=n;t.pri=+$('#tp').value;t.due=$('#tdue').value||'';saveDB();closeSheet();render();toast('Saved');}
+function delTodo(id){if(!confirm('Delete this to-do?'))return;DB.goals.todos=DB.goals.todos.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function editGoal(id){const g=DB.goals.long.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit goal</h2><label>Goal name</label><input id="gn" value="${esc(g.name)}">
+  <label>Sub-goals</label>
+  ${g.sub.map(s=>`<div class="row mb8"><input value="${esc(s.name)}" onchange="renameSub('${id}','${s.id}',this.value)" style="flex:1">
+    <button class="btn small danger" onclick="delSub('${id}','${s.id}')">\u00d7</button></div>`).join('')}
+  <div class="row mt8"><input id="newsub" placeholder="Add a sub-goal" style="flex:1"><button class="btn small soft" onclick="addSub('${id}')">Add</button></div>
+  <button class="btn full mt16" onclick="saveGoalEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delGoal('${id}')">Delete goal</button>`);}
+function renameSub(gid,sid,v){const g=DB.goals.long.find(x=>x.id===gid);const s=g.sub.find(x=>x.id===sid);if(v.trim())s.name=v.trim();saveDB();}
+function delSub(gid,sid){const g=DB.goals.long.find(x=>x.id===gid);g.sub=g.sub.filter(x=>x.id!==sid);saveDB();editGoal(gid);}
+function addSub(gid){const g=DB.goals.long.find(x=>x.id===gid);const v=$('#newsub').value.trim();if(!v)return;g.sub.push({id:uid(),name:v,done:false});saveDB();editGoal(gid);}
+function saveGoalEdit(id){const g=DB.goals.long.find(x=>x.id===id);const n=$('#gn').value.trim();if(!n)return toast('Name required');g.name=n;saveDB();closeSheet();render();toast('Saved');}
+function delGoal(id){if(!confirm('Delete this goal and all its sub-goals?'))return;DB.goals.long=DB.goals.long.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function editTrade(id){const t=DB.trades.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit trade</h2>
+  <div class="grid2"><div><label>Ticker</label><input id="tsym" value="${esc(t.sym)}" style="text-transform:uppercase"></div>
+    <div><label>Direction</label><select id="tdir"><option ${t.dir==='Long'?'selected':''}>Long</option><option ${t.dir==='Short'?'selected':''}>Short</option></select></div></div>
+  <label>P&L ($)</label><input id="tpnl" type="number" value="${t.pnl}" inputmode="numeric">
+  <div class="grid2"><div><label>Setup</label><select id="tset">${['Breakout','Pullback','Reversal','Gap fill','Other'].map(x=>`<option ${t.setup===x?'selected':''}>${x}</option>`).join('')}</select></div>
+    <div><label>Emotion</label><input id="temo" value="${esc(t.emotion)}"></div></div>
+  <div class="row mt12" style="gap:8px"><label style="margin:0"><input type="checkbox" id="tvs" ${t.validSetup?'checked':''} style="width:auto;display:inline;margin-right:6px">Valid setup</label>
+    <label style="margin:0"><input type="checkbox" id="tfr" ${t.followedRules?'checked':''} style="width:auto;display:inline;margin-right:6px">Followed rules</label></div>
+  <label style="margin-top:14px"><input type="checkbox" id="tsim" ${t.sim?'checked':''} style="width:auto;display:inline;margin-right:6px">Sim / paper trade</label>
+  <label>Lesson</label><textarea id="tles" rows="2">${esc(t.lesson||'')}</textarea>
+  <button class="btn full mt16" onclick="saveTradeEdit('${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delTrade('${id}')">Delete trade</button>`);}
+function rebuildEq(){let eq=0;DB.trades.forEach(t=>{eq+=t.pnl;t.eq=eq;});}
+function saveTradeEdit(id){const t=DB.trades.find(x=>x.id===id);const sym=($('#tsym').value||'').toUpperCase().trim();if(!sym)return toast('Ticker required');
+  t.sym=sym;t.dir=$('#tdir').value;t.pnl=Math.round(+$('#tpnl').value)||0;t.setup=$('#tset').value;t.emotion=$('#temo').value||'\u2014';
+  t.validSetup=$('#tvs').checked;t.followedRules=$('#tfr').checked;t.sim=$('#tsim').checked;t.lesson=$('#tles').value;
+  rebuildEq();saveDB();closeSheet();render();toast('Saved');}
+function delTrade(id){if(!confirm('Delete this trade?'))return;DB.trades=DB.trades.filter(x=>x.id!==id);rebuildEq();saveDB();closeSheet();render();toast('Deleted');}
+
+const FIN_FIELDS={accounts:[['name','Name','text'],['bal','Balance','number']],holdings:[['sym','Symbol','text'],['qty','Qty','number'],['price','Price','number']],income:[['amt','Amount','number'],['note','Note','text']],savings:[['name','Name','text'],['cur','Current','number'],['goal','Goal','number']],debt:[['name','Name','text'],['bal','Balance','number'],['min','Min/mo','number']]};
+function editFin(cat,id){const item=DB.finance[cat].find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">Edit</h2>
+  ${FIN_FIELDS[cat].map(f=>`<label>${f[1]}</label><input id="ef_${f[0]}" type="${f[2]}" value="${esc(String(item[f[0]]??''))}">`).join('')}
+  <button class="btn full mt16" onclick="saveFinEdit('${cat}','${id}')">Save changes</button>
+  <button class="btn full danger mt8" onclick="delFin('${cat}','${id}')">Delete</button>`);}
+function saveFinEdit(cat,id){const item=DB.finance[cat].find(x=>x.id===id);
+  FIN_FIELDS[cat].forEach(f=>{const v=$('#ef_'+f[0]).value;item[f[0]]=f[2]==='number'?(+v||0):(f[0]==='sym'?v.toUpperCase():v);});
+  saveDB();closeSheet();render();toast('Saved');}
+function delFin(cat,id){if(!confirm('Delete this entry?'))return;DB.finance[cat]=DB.finance[cat].filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+function photoOpts(id){const p=DB.photos.find(x=>x.id===id);
+  openSheet(`<h2 class="mb12">${fmtDate(p.date)}</h2>
+  ${p.img?`<img src="${p.img}" style="width:100%;border-radius:14px;margin-bottom:12px">`:''}
+  <label>Tag (optional)</label><input id="ptag" value="${esc(p.tag||'')}" placeholder="Front / Side / Back">
+  <button class="btn full mt16" onclick="savePhotoEdit('${id}')">Save</button>
+  <button class="btn full danger mt8" onclick="delPhoto('${id}')">Delete photo</button>`);}
+function savePhotoEdit(id){const p=DB.photos.find(x=>x.id===id);p.tag=$('#ptag').value;saveDB();closeSheet();render();toast('Saved');}
+function delPhoto(id){if(!confirm('Delete this photo?'))return;DB.photos=DB.photos.filter(x=>x.id!==id);saveDB();closeSheet();render();toast('Deleted');}
+
+/* ============ BOOT ============ */
+render();
+</script>
+</body>
+</html>
